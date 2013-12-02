@@ -1,0 +1,11 @@
+// BGCommander build settings
+
+#include "common.xcconfig"
+
+PRODUCT_NAME = BGCommander
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) PROJECT=BGCommander $(COMMON_GCC_PREPROCESSOR_DEFINITIONS)
+
+OTHER_LDFLAGS = -undefined dynamic_lookup -headerpad_max_install_names -sectcreate __TEXT __info_plist $(INFOPLIST_FILE)
+
+INFOPLIST_FILE = BGCommander/Info.plist
+GCC_PREFIX_HEADER = BGCommander/BGCommander-Prefix.pch
