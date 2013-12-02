@@ -1,0 +1,3 @@
+[submodule "gbcli"]
+	path = gbcli
+	url = git@github.com:popavo/GBCli.git
