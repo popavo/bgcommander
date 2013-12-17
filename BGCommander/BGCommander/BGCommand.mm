@@ -22,8 +22,6 @@ BGCommand& BGCommand::sharedAppCommand() {
       }
       return 0;
     });
-
-    _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
   });
   return _sharedAppCommand;
 }
@@ -398,6 +396,14 @@ bool BGCommand::parse(BGStringVector& args, GBCommandLineParseBlock parse_block)
 }
 
 BGCommand& BGCommand::parseCommand(BGStringVector& args) {
+  if (_isAppCommand) {
+    // Add the help command at the very end so that it's the last in the command list...
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+      addCommand({"help", "Display global or [command] help documentation"});
+    });
+  }
+
   if (args.empty()) {
     return *this;
   }
