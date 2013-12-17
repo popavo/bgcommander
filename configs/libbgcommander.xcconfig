@@ -1,9 +1,0 @@
-// libbgcommander
-
-#include "common.xcconfig"
-
-PRODUCT_NAME = libbgcommander
-
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) PROJECT=BGCommanderLib $(COMMON_GCC_PREPROCESSOR_DEFINITIONS)
-
-GCC_PREFIX_HEADER = libbgcommander/libbgcommander-Prefix.pch

@@ -7,23 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D3A10E5E184CF61200287D5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A10E5D184CF61200287D5E /* Foundation.framework */; };
+		D38A45531859623B00C104F7 /* GBCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D38A454E1859623B00C104F7 /* GBCommandLineParser.m */; };
+		D38A45551859623B00C104F7 /* GBSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = D38A45521859623B00C104F7 /* GBSettings.m */; };
+		D38A45711859632100C104F7 /* BGCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = D38A45591859632100C104F7 /* BGCommand.mm */; };
+		D38A45721859632100C104F7 /* BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D38A455B1859632100C104F7 /* BGCommander.mm */; };
+		D39E8927184D2AFC00E16A87 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A10E70184CF6B800287D5E /* Cocoa.framework */; };
 		D3A10E61184CF61200287D5E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3A10E60184CF61200287D5E /* main.mm */; };
 		D3A10E65184CF61200287D5E /* BGCommander.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D3A10E64184CF61200287D5E /* BGCommander.1 */; };
-		D3A10E71184CF6B800287D5E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A10E70184CF6B800287D5E /* Cocoa.framework */; };
-		D3A10E7B184CF6B800287D5E /* libbgcommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3A10E7A184CF6B800287D5E /* libbgcommander.mm */; };
-		D3A10E9A184CF6F500287D5E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A10E70184CF6B800287D5E /* Cocoa.framework */; };
-		D3A10EB9184CF9D100287D5E /* libbgcommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3A10E7A184CF6B800287D5E /* libbgcommander.mm */; };
-		D3A10EFF184D082800287D5E /* liblibbgcommander.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A10E99184CF6F500287D5E /* liblibbgcommander.a */; };
+		D3C55374186038C700753234 /* BGString.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3C5536E186038C700753234 /* BGString.mm */; };
+		D3C55375186038C700753234 /* GBOptionsHelper+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3C55370186038C700753234 /* GBOptionsHelper+BGCommander.mm */; };
+		D3C55376186038C700753234 /* GBSettings+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3C55372186038C700753234 /* GBSettings+BGCommander.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D3A10EBA184CFA4800287D5E /* PBXContainerItemProxy */ = {
+		D39E8899184D182800E16A87 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D3A10E52184CF61200287D5E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D3A10E98184CF6F500287D5E;
-			remoteInfo = libbgcommander.a;
+			containerPortal = D39E8894184D182800E16A87 /* GBCli.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 734849FC1511FD010031EF85;
+			remoteInfo = GBCli;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -41,24 +43,40 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D38A454D1859623B00C104F7 /* GBCommandLineParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GBCommandLineParser.h; path = gbcli/GBCli/src/GBCommandLineParser.h; sourceTree = SOURCE_ROOT; };
+		D38A454E1859623B00C104F7 /* GBCommandLineParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GBCommandLineParser.m; path = gbcli/GBCli/src/GBCommandLineParser.m; sourceTree = SOURCE_ROOT; };
+		D38A454F1859623B00C104F7 /* GBOptionsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GBOptionsHelper.h; path = gbcli/GBCli/src/GBOptionsHelper.h; sourceTree = SOURCE_ROOT; };
+		D38A45501859623B00C104F7 /* GBOptionsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GBOptionsHelper.m; path = gbcli/GBCli/src/GBOptionsHelper.m; sourceTree = SOURCE_ROOT; };
+		D38A45511859623B00C104F7 /* GBSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GBSettings.h; path = gbcli/GBCli/src/GBSettings.h; sourceTree = SOURCE_ROOT; };
+		D38A45521859623B00C104F7 /* GBSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GBSettings.m; path = gbcli/GBCli/src/GBSettings.m; sourceTree = SOURCE_ROOT; };
+		D38A45581859632100C104F7 /* BGCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommand.h; sourceTree = "<group>"; };
+		D38A45591859632100C104F7 /* BGCommand.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BGCommand.mm; sourceTree = "<group>"; };
+		D38A455A1859632100C104F7 /* BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommander.h; sourceTree = "<group>"; };
+		D38A455B1859632100C104F7 /* BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BGCommander.mm; sourceTree = "<group>"; };
+		D38A455C1859632100C104F7 /* BGCommanderDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommanderDefines.h; sourceTree = "<group>"; };
+		D38A455D1859632100C104F7 /* BGOptionDefinitionVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGOptionDefinitionVector.h; sourceTree = "<group>"; };
+		D39E8894184D182800E16A87 /* GBCli.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GBCli.xcodeproj; path = gbcli/GBCli.xcodeproj; sourceTree = "<group>"; };
+		D39E88A8184D1AA700E16A87 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		D3A10E5A184CF61200287D5E /* BGCommander */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BGCommander; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3A10E5D184CF61200287D5E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D3A10E60184CF61200287D5E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		D3A10E63184CF61200287D5E /* BGCommander-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BGCommander-Prefix.pch"; sourceTree = "<group>"; };
 		D3A10E64184CF61200287D5E /* BGCommander.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = BGCommander.1; sourceTree = "<group>"; };
-		D3A10E6F184CF6B800287D5E /* libbgcommander.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libbgcommander.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3A10E70184CF6B800287D5E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D3A10E73184CF6B800287D5E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D3A10E74184CF6B800287D5E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D3A10E75184CF6B800287D5E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		D3A10E78184CF6B800287D5E /* libbgcommander-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "libbgcommander-Prefix.pch"; sourceTree = "<group>"; };
-		D3A10E79184CF6B800287D5E /* libbgcommander.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libbgcommander.h; sourceTree = "<group>"; };
-		D3A10E7A184CF6B800287D5E /* libbgcommander.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = libbgcommander.mm; sourceTree = "<group>"; };
-		D3A10E99184CF6F500287D5E /* liblibbgcommander.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibbgcommander.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3A10EE2184CFDB600287D5E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D3A10EF2184D056B00287D5E /* BGCommander.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BGCommander.xcconfig; sourceTree = "<group>"; };
 		D3A10EF5184D056B00287D5E /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
-		D3A10EFD184D056B00287D5E /* libbgcommander.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libbgcommander.xcconfig; sourceTree = "<group>"; };
+		D3C5536C186038C700753234 /* BGCommanderHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommanderHelpers.h; sourceTree = "<group>"; };
+		D3C5536D186038C700753234 /* BGString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGString.h; sourceTree = "<group>"; };
+		D3C5536E186038C700753234 /* BGString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BGString.mm; sourceTree = "<group>"; };
+		D3C5536F186038C700753234 /* GBOptionsHelper+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBOptionsHelper+BGCommander.h"; sourceTree = "<group>"; };
+		D3C55370186038C700753234 /* GBOptionsHelper+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBOptionsHelper+BGCommander.mm"; sourceTree = "<group>"; };
+		D3C55371186038C700753234 /* GBSettings+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBSettings+BGCommander.h"; sourceTree = "<group>"; };
+		D3C55372186038C700753234 /* GBSettings+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBSettings+BGCommander.mm"; sourceTree = "<group>"; };
+		D3C55373186038C700753234 /* NSStringHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringHelpers.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,36 +84,59 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3A10EFF184D082800287D5E /* liblibbgcommander.a in Frameworks */,
-				D3A10E5E184CF61200287D5E /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3A10E6C184CF6B800287D5E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D3A10E71184CF6B800287D5E /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3A10E96184CF6F500287D5E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D3A10E9A184CF6F500287D5E /* Cocoa.framework in Frameworks */,
+				D39E8927184D2AFC00E16A87 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D38A454B1859621B00C104F7 /* GBCli */ = {
+			isa = PBXGroup;
+			children = (
+				D38A454D1859623B00C104F7 /* GBCommandLineParser.h */,
+				D38A454E1859623B00C104F7 /* GBCommandLineParser.m */,
+				D38A454F1859623B00C104F7 /* GBOptionsHelper.h */,
+				D38A45501859623B00C104F7 /* GBOptionsHelper.m */,
+				D38A45511859623B00C104F7 /* GBSettings.h */,
+				D38A45521859623B00C104F7 /* GBSettings.m */,
+			);
+			name = GBCli;
+			sourceTree = "<group>";
+		};
+		D38A45571859632100C104F7 /* BGCommander */ = {
+			isa = PBXGroup;
+			children = (
+				D38A45581859632100C104F7 /* BGCommand.h */,
+				D38A45591859632100C104F7 /* BGCommand.mm */,
+				D38A455A1859632100C104F7 /* BGCommander.h */,
+				D38A455B1859632100C104F7 /* BGCommander.mm */,
+				D3C5536D186038C700753234 /* BGString.h */,
+				D3C5536E186038C700753234 /* BGString.mm */,
+				D38A455D1859632100C104F7 /* BGOptionDefinitionVector.h */,
+				D3C5536C186038C700753234 /* BGCommanderHelpers.h */,
+				D3C5536F186038C700753234 /* GBOptionsHelper+BGCommander.h */,
+				D3C55370186038C700753234 /* GBOptionsHelper+BGCommander.mm */,
+				D3C55371186038C700753234 /* GBSettings+BGCommander.h */,
+				D3C55372186038C700753234 /* GBSettings+BGCommander.mm */,
+				D3C55373186038C700753234 /* NSStringHelpers.h */,
+				D38A455C1859632100C104F7 /* BGCommanderDefines.h */,
+			);
+			path = BGCommander;
+			sourceTree = "<group>";
+		};
+		D39E8895184D182800E16A87 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D39E889A184D182800E16A87 /* GBCli */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		D3A10E51184CF61200287D5E = {
 			isa = PBXGroup;
 			children = (
 				D3A10E5F184CF61200287D5E /* BGCommander */,
-				D3A10E76184CF6B800287D5E /* libbgcommander */,
-				D3A10EF1184D056B00287D5E /* configs */,
 				D3A10E5C184CF61200287D5E /* Frameworks */,
 				D3A10E5B184CF61200287D5E /* Products */,
 			);
@@ -105,8 +146,6 @@
 			isa = PBXGroup;
 			children = (
 				D3A10E5A184CF61200287D5E /* BGCommander */,
-				D3A10E6F184CF6B800287D5E /* libbgcommander.dylib */,
-				D3A10E99184CF6F500287D5E /* liblibbgcommander.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,6 +153,7 @@
 		D3A10E5C184CF61200287D5E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D39E8894184D182800E16A87 /* GBCli.xcodeproj */,
 				D3A10E5D184CF61200287D5E /* Foundation.framework */,
 				D3A10E70184CF6B800287D5E /* Cocoa.framework */,
 				D3A10E72184CF6B800287D5E /* Other Frameworks */,
@@ -124,6 +164,8 @@
 		D3A10E5F184CF61200287D5E /* BGCommander */ = {
 			isa = PBXGroup;
 			children = (
+				D38A45571859632100C104F7 /* BGCommander */,
+				D38A454B1859621B00C104F7 /* GBCli */,
 				D3A10E60184CF61200287D5E /* main.mm */,
 				D3A10E62184CF61200287D5E /* Supporting Files */,
 			);
@@ -136,6 +178,7 @@
 				D3A10E64184CF61200287D5E /* BGCommander.1 */,
 				D3A10E63184CF61200287D5E /* BGCommander-Prefix.pch */,
 				D3A10EE2184CFDB600287D5E /* Info.plist */,
+				D3A10EF1184D056B00287D5E /* configs */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -150,52 +193,18 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		D3A10E76184CF6B800287D5E /* libbgcommander */ = {
-			isa = PBXGroup;
-			children = (
-				D3A10E79184CF6B800287D5E /* libbgcommander.h */,
-				D3A10E7A184CF6B800287D5E /* libbgcommander.mm */,
-				D3A10E77184CF6B800287D5E /* Supporting Files */,
-			);
-			path = libbgcommander;
-			sourceTree = "<group>";
-		};
-		D3A10E77184CF6B800287D5E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				D3A10E78184CF6B800287D5E /* libbgcommander-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		D3A10EF1184D056B00287D5E /* configs */ = {
 			isa = PBXGroup;
 			children = (
-				D3A10EF2184D056B00287D5E /* BGCommander.xcconfig */,
+				D39E88A8184D1AA700E16A87 /* version.xcconfig */,
 				D3A10EF5184D056B00287D5E /* common.xcconfig */,
-				D3A10EFD184D056B00287D5E /* libbgcommander.xcconfig */,
+				D3A10EF2184D056B00287D5E /* BGCommander.xcconfig */,
 			);
-			path = configs;
+			name = configs;
+			path = ../configs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
-
-/* Begin PBXHeadersBuildPhase section */
-		D3A10E6D184CF6B800287D5E /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3A10E97184CF6F500287D5E /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		D3A10E59184CF61200287D5E /* BGCommander */ = {
@@ -209,46 +218,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				D3A10EBB184CFA4800287D5E /* PBXTargetDependency */,
 			);
 			name = BGCommander;
 			productName = BGCommander;
 			productReference = D3A10E5A184CF61200287D5E /* BGCommander */;
 			productType = "com.apple.product-type.tool";
-		};
-		D3A10E6E184CF6B800287D5E /* libbgcommander.dylib */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D3A10E8F184CF6B800287D5E /* Build configuration list for PBXNativeTarget "libbgcommander.dylib" */;
-			buildPhases = (
-				D3A10E6B184CF6B800287D5E /* Sources */,
-				D3A10E6C184CF6B800287D5E /* Frameworks */,
-				D3A10E6D184CF6B800287D5E /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = libbgcommander.dylib;
-			productName = "libbgcommander-dylib";
-			productReference = D3A10E6F184CF6B800287D5E /* libbgcommander.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		D3A10E98184CF6F500287D5E /* libbgcommander.a */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D3A10EB3184CF6F500287D5E /* Build configuration list for PBXNativeTarget "libbgcommander.a" */;
-			buildPhases = (
-				D3A10E95184CF6F500287D5E /* Sources */,
-				D3A10E96184CF6F500287D5E /* Frameworks */,
-				D3A10E97184CF6F500287D5E /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = libbgcommander.a;
-			productName = "libbgcommander-static";
-			productReference = D3A10E99184CF6F500287D5E /* liblibbgcommander.a */;
-			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -269,49 +243,46 @@
 			mainGroup = D3A10E51184CF61200287D5E;
 			productRefGroup = D3A10E5B184CF61200287D5E /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = D39E8895184D182800E16A87 /* Products */;
+					ProjectRef = D39E8894184D182800E16A87 /* GBCli.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				D3A10E59184CF61200287D5E /* BGCommander */,
-				D3A10E6E184CF6B800287D5E /* libbgcommander.dylib */,
-				D3A10E98184CF6F500287D5E /* libbgcommander.a */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D39E889A184D182800E16A87 /* GBCli */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = GBCli;
+			remoteRef = D39E8899184D182800E16A87 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D3A10E56184CF61200287D5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3C55374186038C700753234 /* BGString.mm in Sources */,
+				D38A45721859632100C104F7 /* BGCommander.mm in Sources */,
+				D38A45711859632100C104F7 /* BGCommand.mm in Sources */,
+				D38A45551859623B00C104F7 /* GBSettings.m in Sources */,
+				D38A45531859623B00C104F7 /* GBCommandLineParser.m in Sources */,
+				D3C55375186038C700753234 /* GBOptionsHelper+BGCommander.mm in Sources */,
+				D3C55376186038C700753234 /* GBSettings+BGCommander.mm in Sources */,
 				D3A10E61184CF61200287D5E /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D3A10E6B184CF6B800287D5E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D3A10E7B184CF6B800287D5E /* libbgcommander.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3A10E95184CF6F500287D5E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D3A10EB9184CF9D100287D5E /* libbgcommander.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		D3A10EBB184CFA4800287D5E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D3A10E98184CF6F500287D5E /* libbgcommander.a */;
-			targetProxy = D3A10EBA184CFA4800287D5E /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D3A10E66184CF61200287D5E /* Debug */ = {
@@ -388,8 +359,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D3A10EF2184D056B00287D5E /* BGCommander.xcconfig */;
 			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "BGCommander/BGCommander-Prefix.pch";
+				PRODUCT_NAME = BGCommander;
 			};
 			name = Debug;
 		};
@@ -397,53 +367,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D3A10EF2184D056B00287D5E /* BGCommander.xcconfig */;
 			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "BGCommander/BGCommander-Prefix.pch";
-			};
-			name = Release;
-		};
-		D3A10E90184CF6B800287D5E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3A10EFD184D056B00287D5E /* libbgcommander.xcconfig */;
-			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_PREFIX_HEADER = "libbgcommander/libbgcommander-Prefix.pch";
-				OTHER_LDFLAGS = (
-					"-headerpad_max_install_names",
-					"-undefined",
-					dynamic_lookup,
-				);
-			};
-			name = Debug;
-		};
-		D3A10E91184CF6B800287D5E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3A10EFD184D056B00287D5E /* libbgcommander.xcconfig */;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_PREFIX_HEADER = "libbgcommander/libbgcommander-Prefix.pch";
-				OTHER_LDFLAGS = (
-					"-headerpad_max_install_names",
-					"-undefined",
-					dynamic_lookup,
-				);
-			};
-			name = Release;
-		};
-		D3A10EB4184CF6F500287D5E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3A10EFD184D056B00287D5E /* libbgcommander.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		D3A10EB5184CF6F500287D5E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3A10EFD184D056B00287D5E /* libbgcommander.xcconfig */;
-			buildSettings = {
+				PRODUCT_NAME = BGCommander;
 			};
 			name = Release;
 		};
@@ -464,24 +388,6 @@
 			buildConfigurations = (
 				D3A10E69184CF61200287D5E /* Debug */,
 				D3A10E6A184CF61200287D5E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D3A10E8F184CF6B800287D5E /* Build configuration list for PBXNativeTarget "libbgcommander.dylib" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D3A10E90184CF6B800287D5E /* Debug */,
-				D3A10E91184CF6B800287D5E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D3A10EB3184CF6F500287D5E /* Build configuration list for PBXNativeTarget "libbgcommander.a" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D3A10EB4184CF6F500287D5E /* Debug */,
-				D3A10EB5184CF6F500287D5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
