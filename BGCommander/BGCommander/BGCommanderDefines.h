@@ -7,9 +7,11 @@
 # define __has_attribute(x) 0 // Compatibility with non-clang compilers.
 #endif
 
-#define EQ_OPERATOR(__type, __test) \
-  bool operator ==(__type rs) const { return __test; } \
-  bool operator !=(__type rs) const { return !(*this == rs); }
+#if !defined(EQ_OPERATOR)
+# define EQ_OPERATOR(__type, __test) \
+   bool operator ==(__type rs) const { return __test; } \
+   bool operator !=(__type rs) const { return !(*this == rs); }
+#endif
 
 #if !defined(NO_RETURN)
 # if __has_attribute(analyzer_noreturn)
@@ -38,26 +40,26 @@
 #define BGCOMMANDER_STR(x) #x
 #define BGCOMMANDER_STRINGIFY(macro) BGCOMMANDER_STR(macro)
 
+#if !defined(VERSION_STR)
 #if defined(BGCOMMANDER_VERSION)
 # define VERSION_STR BGCOMMANDER_STRINGIFY(BGCOMMANDER_VERSION)
-#else
-# define VERSION_STR "##VERSION##"
+#define VERSION (@ VERSION_STR)
+#endif
 #endif
 
+#if !defined(BUILD_STR)
 #if defined(BGCOMMANDER_BUILD)
 # define BUILD_STR BGCOMMANDER_STRINGIFY(BGCOMMANDER_BUILD)
-#else
-# define BUILD_STR "##BUILD##"
+#define BUILD (@ BUILD_STR)
+#endif
 #endif
 
+#if !defined(NAME_STR)
 #if defined(BGCOMMANDER_NAME)
 # define NAME_STR BGCOMMANDER_STRINGIFY(BGCOMMANDER_NAME)
-#else
-# define NAME_STR "##LIB##"
+#define NAME (@ NAME_STR)
+#endif
 #endif
 
-#define VERSION (@ VERSION_STR)
-#define BUILD (@ BUILD_STR)
-#define NAME (@ NAME_STR)
 
 #endif

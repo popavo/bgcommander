@@ -1,7 +1,9 @@
 #ifndef __BG_COMMAND_H__
 #define __BG_COMMAND_H__
 
-#import <vector>
+#import "GBOptionsHelper.h"
+#import "GBSettings.h"
+#import "GBCommandLineParser.h"
 #import "BGOptionDefinitionVector.h"
 
 #define BGCommandIvars \

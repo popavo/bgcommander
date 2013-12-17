@@ -3,6 +3,7 @@
 
 #import <string>
 #import <iostream>
+#import "BGCommanderDefines.h"
 
 class BGString;
 

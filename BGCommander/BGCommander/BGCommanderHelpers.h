@@ -1,3 +1,4 @@
+#import "BGCommanderDefines.h"
 #import "GBSettings+BGCommander.h"
 #import "GBOptionsHelper+BGCommander.h"
 #import <sysexits.h>

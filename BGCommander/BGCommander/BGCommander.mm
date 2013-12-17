@@ -79,7 +79,6 @@ void BGCommander::resetAllParentRefs() {
 }
 
 int BGCommander::run() {
-  //std::cout << "Running\n";
   if (runResult > INT32_MIN) return runResult;
   BGStringVector args = [[[NSProcessInfo processInfo] arguments] stringVector];
   args.erase(args.begin());
