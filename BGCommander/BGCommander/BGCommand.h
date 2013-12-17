@@ -51,7 +51,7 @@ protected:
   dispatch_once_t addHelpToken;
 
 private:
-  BGCommand(const std::string& n) { _commonInit(n.c_str()); nameWrapper = true; _finishInit(); }
+  BGCommand(const std::string& n) { _commonInit(n.c_str(), true); }
   static BGCommand& namedWrapper(const BGString& n) { return *(new BGCommand(std::string(n.c_str()))); }
 
 public:
@@ -150,7 +150,7 @@ public:
 private:
   void _initIvars();
   void _initNameDeps();
-  void _commonInit(const BGString& _s);
+  void _commonInit(const BGString& _s, bool _nw = false);
   void _finishInit();
   void clear();
 

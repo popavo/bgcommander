@@ -22,6 +22,7 @@ BGCommand& BGCommand::sharedAppCommand() {
 
 void BGCommand::_initIvars() {
   name = @"";
+  if (nameWrapper) return;
   description = @"";
   syntax = @"";
   tag = 0;
@@ -32,7 +33,6 @@ void BGCommand::_initIvars() {
   parser = nil;
   runBlock = NULL;
   runFunction = NULL;
-  nameWrapper = false;
   _isAppCommand = false;
   _identifier = 0;
   _needsOptionsReset = true;
@@ -47,9 +47,11 @@ void BGCommand::_initNameDeps() {
   }
 }
 
-void BGCommand::_commonInit(const BGString& _s) {
+void BGCommand::_commonInit(const BGString& _s, bool _nw) {
+  nameWrapper = _nw;
   _initIvars();
   name = _s;
+  if (nameWrapper) return;
   _initNameDeps();
   _identifier = arc4random_uniform(UINT_MAX);
   optionsHelper = [GBOptionsHelper new];
@@ -68,7 +70,7 @@ void BGCommand::_finishInit() {
 }
 
 void BGCommand::_copyAssign(const BGCommand& rs) {
-  if (rs.nameWrapper) {
+  if (nameWrapper || rs.nameWrapper) {
     name = rs.name;
     nameWrapper = rs.nameWrapper;
     return;
@@ -94,6 +96,12 @@ void BGCommand::_copyAssign(const BGCommand& rs) {
 }
 
 void BGCommand::_moveAssign(BGCommand&& rs) {
+  if (nameWrapper || rs.nameWrapper) {
+    name = std::move(rs.name);
+    nameWrapper = std::move(rs.nameWrapper);
+    rs.clear();
+    return;
+  }
   _initIvars();
   name               = std::move(rs.name);
   description        = std::move(rs.description);
@@ -172,6 +180,8 @@ std::size_t BGCommand::hash() const {
   std::size_t seed = 0;
 
   hash_combine(seed, name);
+  if (nameWrapper) return seed;
+  
   hash_combine(seed, _identifier);
   hash_combine(seed, tag);
   hash_combine(seed, description);
@@ -536,6 +546,11 @@ void BGCommand::printVersion(int exitVal) {
 
 // TODO: clear()
 void BGCommand::clear() {
+  if (nameWrapper) {
+    name.zero();
+    nameWrapper = 0;
+    return;
+  }
   nameWrapper = 0;
   _isAppCommand = 0;
   _identifier = 0;
@@ -551,6 +566,7 @@ void BGCommand::clear() {
   description.zero();
   syntax.zero();
   runBlock = NULL;
+  addHelpToken = 0;
 }
 
 BGString& BGCommand::inspect(int leadingSpaces) const {
