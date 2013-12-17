@@ -10,16 +10,10 @@ BGCommand& BGCommand::sharedAppCommand() {
   dispatch_once(&onceToken, ^{
     _sharedAppCommand.optionDefinitions = {
       { 'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint },
-      { 'V', @"version", @"Display version information", GBValueNone|GBOptionNoPrint }
+      { 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint }
     };
 
     _sharedAppCommand.setRunBlock(^int(std::vector<BGString> args, GBSettings *options, BGCommand &command) {
-      if (args.empty() || options.printHelp) {
-        command.printHelp();
-      }
-      if (options.printVersion) {
-        [command.optionsHelper printVersion];
-      }
       return 0;
     });
   });
@@ -43,6 +37,7 @@ void BGCommand::_initIvars() {
   _identifier = 0;
   _needsOptionsReset = true;
   parent = nullptr;
+  addHelpToken = 0;
 }
 
 void BGCommand::_initNameDeps() {
@@ -59,11 +54,25 @@ void BGCommand::_commonInit(const BGString& _s) {
   _identifier = arc4random_uniform(UINT_MAX);
   optionsHelper = [GBOptionsHelper new];
   parser = [GBCommandLineParser new];
+  
+  optionsHelper.applicationVersion = ^{ return VERSION; };
+  optionsHelper.applicationBuild = ^{ return BUILD; };
+}
 
-  addOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
+void BGCommand::_finishInit() {
+  if (!isAppCommand()) {
+    dispatch_once(&addHelpToken, ^{
+      addOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
+    });
+  }
 }
 
 void BGCommand::_copyAssign(const BGCommand& rs) {
+  if (rs.nameWrapper) {
+    name = rs.name;
+    nameWrapper = rs.nameWrapper;
+    return;
+  }
   _commonInit(rs.name);
   description        = rs.description;
   syntax             = rs.syntax;
@@ -80,6 +89,7 @@ void BGCommand::_copyAssign(const BGCommand& rs) {
   _identifier        = rs._identifier;
   _needsOptionsReset = rs._needsOptionsReset;
   parent             = rs.parent;
+  addHelpToken       = rs.addHelpToken;
   resetParentRefs();
 }
 
@@ -101,6 +111,7 @@ void BGCommand::_moveAssign(BGCommand&& rs) {
   _identifier        = std::move(rs._identifier);
   _needsOptionsReset = std::move(rs._needsOptionsReset);
   parent             = std::move(rs.parent);
+  addHelpToken       = std::move(rs.addHelpToken);
   rs.clear();
   resetParentRefs();
 }
@@ -109,28 +120,32 @@ BGCommand::BGCommand(BGCommand&& rs) {
   _moveAssign(std::move(rs));
 }
 
-BGCommand::BGCommand(const BGCommand& rs) { _copyAssign(rs); }
+BGCommand::BGCommand(const BGCommand& rs) { _copyAssign(rs); _finishInit(); }
 
 BGCommand::BGCommand(const BGString& _s, const BGString& _d, const BGOptionDefinitionVector& _o) {
   _commonInit(_s);
   description = _d;
   optionDefinitions = _o;
+  _finishInit();
 }
 
 BGCommand::BGCommand(const_char _s, const BGString& _d, const BGOptionDefinitionVector& _o) {
   _commonInit(_s);
   description = _d;
   optionDefinitions = _o;
+  _finishInit();
 }
 
 BGCommand::BGCommand(NSString* _s, const BGString& _d, const BGOptionDefinitionVector& _o) {
   _commonInit(_s);
   description = _d;
   optionDefinitions = _o;
+  _finishInit();
 }
 
 BGCommand& BGCommand::operator=(const BGCommand &rs) {
   _copyAssign(rs);
+  _finishInit();
   return *this;
 }
 
@@ -194,8 +209,8 @@ bool BGCommand::hasCommand(const BGString& name) const                    { retu
 bool BGCommand::hasCommand(const BGCommand& rs) const                     { return find(rs) != cend(); }
 BGCommand::iterator BGCommand::find(const BGCommand& cmd)                 { return std::find(commands.begin(), commands.end(), cmd); }
 BGCommand::const_iterator BGCommand::find(const BGCommand& cmd) const     { return std::find(commands.cbegin(), commands.cend(), cmd); }
-BGCommand::iterator BGCommand::find(const BGString& name)                 { BGCommand cmd = namedWrapper(name); return find(cmd); }
-BGCommand::const_iterator BGCommand::find(const BGString& name) const     { BGCommand cmd = namedWrapper(name); return find(cmd); }
+BGCommand::iterator BGCommand::find(const BGString& name)                 { BGCommand& cmd = namedWrapper(name); return find(cmd); }
+BGCommand::const_iterator BGCommand::find(const BGString& name) const     { BGCommand& cmd = namedWrapper(name); return find(cmd); }
 
 BGCommand::iterator BGCommand::search(const BGString& name) {
   iterator i = find(name);
@@ -346,6 +361,14 @@ void BGCommand::setRunFunction(BGCommandRunFunction __r) {
 }
 
 int BGCommand::run(BGStringVector& args) {
+  if (settings.printHelp) {
+    printHelp();
+  }
+
+  if (settings.printVersion) {
+    printVersion();
+  }
+
   if (runBlock != NULL) return runBlock(args, settings, *this);
   if (runFunction != NULL) return runFunction(args, settings, *this);
   return -1;
@@ -355,8 +378,15 @@ void BGCommand::registerDefinitions() {
   if (!_needsOptionsReset) return;
   _needsOptionsReset = false;
 
+  if (!settings) {
+    settings = [GBSettings commandSettingsWithName:name parent:nil];
+  }
+
   optionsHelper = [GBOptionsHelper new];
   parser = [GBCommandLineParser new];
+
+  optionsHelper.applicationVersion = ^{ return VERSION; };
+  optionsHelper.applicationBuild = ^{ return BUILD; };
 
   for (auto const& def:optionDefinitions) {
     [optionsHelper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
@@ -366,6 +396,9 @@ void BGCommand::registerDefinitions() {
 }
 
 void BGCommand::setSettingsWithNameAndParent(const BGString& _n, GBSettings* _s) {
+  if (!settings) {
+    settings = [GBSettings commandSettingsWithName:_n parent:_s];
+  }
   if (!_n || _n.is_equal({_s.name})) return;
   settings = [GBSettings commandSettingsWithName:_n parent:_s];
 }
@@ -398,8 +431,7 @@ bool BGCommand::parse(BGStringVector& args, GBCommandLineParseBlock parse_block)
 BGCommand& BGCommand::parseCommand(BGStringVector& args) {
   if (_isAppCommand) {
     // Add the help command at the very end so that it's the last in the command list...
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&addHelpToken, ^{
       addCommand({"help", "Display global or [command] help documentation"});
     });
   }
@@ -493,6 +525,12 @@ BGString& BGCommand::helpString() {
 void BGCommand::printHelp(int exitVal) {
   BGString help = helpString();
   help.print();
+  exit(exitVal);
+}
+
+void BGCommand::printVersion(int exitVal) {
+  if (!optionsHelper) printHelp(exitVal);
+  [optionsHelper printVersion];
   exit(exitVal);
 }
 

@@ -8,7 +8,7 @@
 
 #define BGCommandIvars \
   name(), description(), syntax(), tag(), commands(), optionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), runBlock(NULL), runFunction(NULL), \
-  nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr)
+  nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr), addHelpToken()
 
 
 class BGCommand {
@@ -48,9 +48,10 @@ protected:
   NSUInteger _identifier;
   bool _needsOptionsReset;
   BGCommand* parent;
+  dispatch_once_t addHelpToken;
 
 private:
-  BGCommand(const std::string& n) : name(n.c_str()), nameWrapper(true) { }
+  BGCommand(const std::string& n) { _commonInit(n.c_str()); nameWrapper = true; _finishInit(); }
   static BGCommand& namedWrapper(const BGString& n) { return *(new BGCommand(std::string(n.c_str()))); }
 
 public:
@@ -142,6 +143,7 @@ public:
 
   BGString& helpString();
   void printHelp(int exitVal = 0);
+  void printVersion(int exitVal = 0);
 
   BGString& inspect(int leadingSpaces = 0) const;
 
@@ -149,6 +151,7 @@ private:
   void _initIvars();
   void _initNameDeps();
   void _commonInit(const BGString& _s);
+  void _finishInit();
   void clear();
 
   void _copyAssign(const BGCommand& rs);
