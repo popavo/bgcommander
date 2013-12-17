@@ -112,7 +112,10 @@ typedef std::vector<BGString> BGStringVector;
 
 inline std::ostream& operator <<(std::ostream& OS, const BGStringVector& strings) {
   for (auto const& str:strings) {
-    OS << str << std::endl;
+    OS << str;
+    if (str != *--strings.cend()) {
+      OS << std::endl;
+    }
   }
   return OS;
 }
