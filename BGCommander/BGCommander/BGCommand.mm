@@ -24,7 +24,7 @@ void BGCommand::_initIvars() {
   name = @"";
   if (nameWrapper) return;
   description = @"";
-  syntax = @"";
+  syntax = {};
   tag = 0;
   commands = {};
   optionDefinitions = {};
@@ -64,13 +64,14 @@ void BGCommand::_commonInit(const BGString& _s, bool _nw) {
 void BGCommand::_finishInit() {
   if (!isAppCommand()) {
     dispatch_once(&addHelpToken, ^{
+      addOption({0, nil, @"Global options", GBOptionSeparator});
       addOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
     });
   }
 }
 
 void BGCommand::_copyAssign(const BGCommand& rs) {
-  if (nameWrapper || rs.nameWrapper) {
+  if (rs.nameWrapper) {
     name = rs.name;
     nameWrapper = rs.nameWrapper;
     return;
@@ -96,7 +97,7 @@ void BGCommand::_copyAssign(const BGCommand& rs) {
 }
 
 void BGCommand::_moveAssign(BGCommand&& rs) {
-  if (nameWrapper || rs.nameWrapper) {
+  if (rs.nameWrapper) {
     name = std::move(rs.name);
     nameWrapper = std::move(rs.nameWrapper);
     rs.clear();
@@ -185,11 +186,11 @@ std::size_t BGCommand::hash() const {
   hash_combine(seed, _identifier);
   hash_combine(seed, tag);
   hash_combine(seed, description);
-  hash_combine(seed, syntax);
   hash_combine(seed, optionsHelper);
   hash_combine(seed, settings);
   hash_combine(seed, parser);
 
+  hash_range(seed, syntax.cbegin(), syntax.cend());
   hash_range(seed, optionDefinitions.cbegin(), optionDefinitions.cend());
   hash_range(seed, cbegin(), cend());
 
@@ -217,8 +218,8 @@ BGCommand& BGCommand::operator [](const BGString& _n)                     { retu
 const BGCommand& BGCommand::operator[](const BGString& _n) const          { return *find(_n); }
 bool BGCommand::hasCommand(const BGString& name) const                    { return find(name) != cend(); }
 bool BGCommand::hasCommand(const BGCommand& rs) const                     { return find(rs) != cend(); }
-BGCommand::iterator BGCommand::find(const BGCommand& cmd)                 { return std::find(commands.begin(), commands.end(), cmd); }
-BGCommand::const_iterator BGCommand::find(const BGCommand& cmd) const     { return std::find(commands.cbegin(), commands.cend(), cmd); }
+BGCommand::iterator BGCommand::find(const BGCommand& cmd)                 { return std::find(begin(), end(), cmd); }
+BGCommand::const_iterator BGCommand::find(const BGCommand& cmd) const     { return std::find(cbegin(), cend(), cmd); }
 BGCommand::iterator BGCommand::find(const BGString& name)                 { BGCommand& cmd = namedWrapper(name); return find(cmd); }
 BGCommand::const_iterator BGCommand::find(const BGString& name) const     { BGCommand& cmd = namedWrapper(name); return find(cmd); }
 
@@ -304,7 +305,7 @@ BGCommand::add_result BGCommand::addCommand(const BGCommand& c) {
 
   iterator i = end();
   if (!hasCommand(c)) {
-    i = commands.insert(end(), c);
+    i = commands.insert(cend(), c);
     if (i != end()) {
       i->setParent(*this);
       added = true;
@@ -351,12 +352,19 @@ void BGCommand::removeOption(BGOptionDefinitionVector::size_type __n)           
 GBOptionDefinition& BGCommand::optionAt(BGOptionDefinitionVector::size_type __n)                { return optionDefinitions[__n]; }
 const GBOptionDefinition& BGCommand::optionAt(BGOptionDefinitionVector::size_type __n) const    { return optionDefinitions[__n]; }
 
+void BGCommand::setSyntaxes(const BGStringVector& rs)                                           { for (auto const& opt:rs) addSyntax(opt); }
+void BGCommand::addSyntax(const BGString& rs)                                                   { syntax.push_back(rs); }
+void BGCommand::removeSyntax(const BGString& rs)                                                { syntax.erase(std::remove(syntax.begin(), syntax.end(), rs), syntax.end()); }
+void BGCommand::removeSyntax(BGStringVector::size_type __n)                                     { if (__n >= syntax.size()) return; removeSyntax(syntax.at(__n)); }
+BGString& BGCommand::syntaxAt(BGStringVector::size_type __n)                                    { return syntax[__n]; }
+const BGString& BGCommand::syntaxAt(BGStringVector::size_type __n) const                        { return syntax[__n]; }
+
+BGString BGCommand::commandString() { return (_isAppCommand || (parent == nullptr)) ? name : parent->commandString() + " " + this->name; }
+
 void BGCommand::setName(const BGString& rs)                                                     { if (rs.valid()) name = rs; _initNameDeps(); }
 BGString BGCommand::getName() const                                                             { return name; }
 void BGCommand::setDescription(BGCommandStringBlock descriptionBlock)                           { if (descriptionBlock != NULL) description = descriptionBlock(*this); }
 BGString BGCommand::getDescription() const                                                      { return description; }
-void BGCommand::setSyntax(BGCommandStringBlock syntaxBlock)                                     { if (syntaxBlock != NULL) syntax = syntaxBlock(*this); }
-BGString BGCommand::getSyntax() const                                                           { return syntax; }
 void BGCommand::setRunBlock(BGCommandRunBlock __r) {
   runBlock = __r;
   if (runBlock != NULL) {
@@ -482,10 +490,12 @@ BGString& BGCommand::helpString() {
 
   // Command synopsis
   if (!isAppCommand()) {
-    if (syntax.valid()) {
+    if (syntax.size()) {
       help.addNewline();
       help += @"SYNOPSIS:";
-      help.appendFormat(@"%*s%@", spacing, "", syntax.fString);
+      for (auto const& syn:syntax) {
+        help.appendFormat(@"%*s%@", spacing, "", syn.fString);
+      }
     }
   }
 
@@ -539,9 +549,16 @@ void BGCommand::printHelp(int exitVal) {
 }
 
 void BGCommand::printVersion(int exitVal) {
-  if (!optionsHelper) printHelp(exitVal);
+  if (!optionsHelper) printHelp(-1);
   [optionsHelper printVersion];
   exit(exitVal);
+}
+
+void BGCommand::printSettings(int exitVal) {
+  if (!optionsHelper || !settings) printHelp(-1);
+  BGString values([optionsHelper valuesStringFromSettings:settings]);
+  values.print();
+  if (exitVal > INT32_MIN) exit(exitVal);
 }
 
 // TODO: clear()
@@ -564,7 +581,7 @@ void BGCommand::clear() {
   parser = nil;
   tag = 0;
   description.zero();
-  syntax.zero();
+  syntax.clear();
   runBlock = NULL;
   addHelpToken = 0;
 }

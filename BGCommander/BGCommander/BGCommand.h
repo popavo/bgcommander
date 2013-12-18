@@ -29,11 +29,11 @@ public:
 
   BGString name;
   BGString description;
-  BGString syntax;
   NSInteger tag;
 
   BGCommandVector commands;
   BGOptionDefinitionVector optionDefinitions;
+  BGStringVector syntax;
 
   GBOptionsHelper* optionsHelper;
   GBSettings* settings;
@@ -121,6 +121,15 @@ public:
   GBOptionDefinition& optionAt(BGOptionDefinitionVector::size_type __n);
   const GBOptionDefinition& optionAt(BGOptionDefinitionVector::size_type __n) const;
 
+  void setSyntaxes(const BGStringVector& rs);
+  void addSyntax(const BGString& rs);
+  void removeSyntax(const BGString& rs);
+  void removeSyntax(BGStringVector::size_type __n);
+  BGString& syntaxAt(BGStringVector::size_type __n);
+  const BGString& syntaxAt(BGStringVector::size_type __n) const;
+
+  BGString commandString();
+
   void registerDefinitions();
   void setSettingsWithNameAndParent(const BGString& _n, GBSettings* _s);
 
@@ -128,8 +137,6 @@ public:
   BGString    getName() const;
   void        setDescription(BGCommandStringBlock descriptionBlock);
   BGString    getDescription() const;
-  void        setSyntax(BGCommandStringBlock syntaxBlock);
-  BGString    getSyntax() const;
   
   void setRunBlock(BGCommandRunBlock __r);
   void setRunFunction(BGCommandRunFunction __r);
@@ -144,6 +151,7 @@ public:
   BGString& helpString();
   void printHelp(int exitVal = 0);
   void printVersion(int exitVal = 0);
+  void printSettings(int exitVal = INT32_MIN);
 
   BGString& inspect(int leadingSpaces = 0) const;
 

@@ -39,7 +39,7 @@ public:
   iterator          find(const BGString& _n);
   const_iterator    find(const BGString& _n) const;
   BGCommand&        command(const BGString& _n, bool addIfMissing=true);
-  add_result        addCommand(const BGCommand& __c);
+  BGCommand&        addCommand(const BGCommand& __c);
   add_result        addCommand(const BGCommand& command, const BGCommand& parent);
   iterator          removeCommand(const BGCommand& _c);
 

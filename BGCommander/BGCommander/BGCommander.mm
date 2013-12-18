@@ -41,13 +41,13 @@ BGCommander::iterator BGCommander::find(const BGString& name)                 { 
 BGCommander::const_iterator BGCommander::find(const BGString& name) const     { return BGCommand::AppCommand.find(name); }
 BGCommand& BGCommander::command(const BGString& _n, bool addIfMissing)        { return BGCommand::AppCommand == _n ? BGCommand::AppCommand : *BGCommand::AppCommand.command(_n, addIfMissing); }
 BGCommander::iterator BGCommander::removeCommand(const BGCommand& _c)         { return BGCommand::AppCommand.removeCommand(_c); }
-BGCommander::add_result BGCommander::addCommand(const BGCommand& __c)         { return BGCommand::AppCommand.addCommand(__c); }
+BGCommand& BGCommander::addCommand(const BGCommand& __c)                      { BGCommand::AppCommand.addCommand(__c); return *find(__c.name); }
 
 BGCommander::add_result BGCommander::addCommand(const BGCommand& c, const BGCommand& parent) {
   if (!c) return {end(), false};
 
   if (!parent || parent.is_equal(BGCommand::AppCommand)) {
-    return addCommand(c);
+    return BGCommand::AppCommand.addCommand(c);
   }
 
   iterator i = BGCommand::AppCommand.search(parent.name);

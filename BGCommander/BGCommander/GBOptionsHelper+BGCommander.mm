@@ -133,6 +133,10 @@
 }
 
 -(NSString*)valuesStringFromSettings:(GBSettings*)settings {
+  return [self valuesStringFromSettings:settings includeArguments:NO];
+}
+
+-(NSString*)valuesStringFromSettings:(GBSettings*)settings includeArguments:(BOOL)includeArgs {
   NSMutableString* valuesString = [NSMutableString new];
 
   NSMutableArray *rows = [NSMutableArray array];
@@ -209,19 +213,21 @@
 	// Render header.
   [valuesString appendString:[self replacePlaceholdersFromBlock:self.printValuesHeader]];
 
-	// Render all arguments if any.
-	if (settings.arguments.count > 0) {
-		[self replacePlaceholdersAndPrintStringFromBlock:self.printValuesArgumentsHeader];
-		[settings.arguments enumerateObjectsUsingBlock:^(NSString *argument, NSUInteger idx, BOOL *stop) {
-      [valuesString appendFormat:@"- %@", argument];
-			if (settingsHierarchyLevels > 1) {
-				GBSettings *level = [settings settingsForArgument:argument];
-        [valuesString appendFormat:@" (%@)", level.name];
-			}
+  if (includeArgs) {
+    // Render all arguments if any.
+    if (settings.arguments.count > 0) {
+      [self replacePlaceholdersAndPrintStringFromBlock:self.printValuesArgumentsHeader];
+      [settings.arguments enumerateObjectsUsingBlock:^(NSString *argument, NSUInteger idx, BOOL *stop) {
+        [valuesString appendFormat:@"- %@", argument];
+        if (settingsHierarchyLevels > 1) {
+          GBSettings *level = [settings settingsForArgument:argument];
+          [valuesString appendFormat:@" (%@)", level.name];
+        }
+        [valuesString appendString:@"\n"];
+      }];
       [valuesString appendString:@"\n"];
-		}];
-    [valuesString appendString:@"\n"];
-	}
+    }
+  }
 
 	// Render all rows.
 	[self replacePlaceholdersAndPrintStringFromBlock:self.printValuesOptionsHeader];
