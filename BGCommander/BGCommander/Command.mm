@@ -10,7 +10,7 @@ Command& Command::sharedAppCommand() {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
-    _sharedAppCommand.addOption({ 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint });
+    _sharedAppCommand.addGlobalOption({ 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint });
     _sharedAppCommand.setRunBlock(^int(std::vector<StringRef> args, GBSettings *options, Command &command) {
       return 0;
     });
@@ -26,6 +26,7 @@ void Command::_initIvars() {
   tag = 0;
   commands = {};
   optionDefinitions = {};
+  globalOptionDefinitions = {};
   optionsHelper = nil;
   settings = nil;
   parser = nil;
@@ -61,8 +62,8 @@ void Command::_commonInit(const StringRef& _s, bool _nw) {
 
 void Command::_finishInit() {
   dispatch_once(&addHelpToken, ^{
-    addOption({0, nil, @"Global options", GBOptionSeparator});
-    addOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
+    addGlobalOption({0, nil, @"Global options", GBOptionSeparator});
+    addGlobalOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
   });
 }
 
@@ -73,22 +74,23 @@ void Command::_copyAssign(const Command& rs) {
     return;
   }
   _commonInit(rs.name);
-  description        = rs.description;
-  syntax             = rs.syntax;
-  tag                = rs.tag;
-  commands           = rs.commands;
-  optionDefinitions  = rs.optionDefinitions;
-  optionsHelper      = rs.optionsHelper;
-  settings           = rs.settings;
-  parser             = rs.parser;
-  runBlock           = rs.runBlock;
-  runFunction        = rs.runFunction;
-  nameWrapper        = rs.nameWrapper;
-  _isAppCommand      = rs._isAppCommand;
-  _identifier        = rs._identifier;
-  _needsOptionsReset = rs._needsOptionsReset;
-  parent             = rs.parent;
-  addHelpToken       = rs.addHelpToken;
+  description             = rs.description;
+  syntax                  = rs.syntax;
+  tag                     = rs.tag;
+  commands                = rs.commands;
+  optionDefinitions       = rs.optionDefinitions;
+  globalOptionDefinitions = rs.globalOptionDefinitions;
+  optionsHelper           = rs.optionsHelper;
+  settings                = rs.settings;
+  parser                  = rs.parser;
+  runBlock                = rs.runBlock;
+  runFunction             = rs.runFunction;
+  nameWrapper             = rs.nameWrapper;
+  _isAppCommand           = rs._isAppCommand;
+  _identifier             = rs._identifier;
+  _needsOptionsReset      = rs._needsOptionsReset;
+  parent                  = rs.parent;
+  addHelpToken            = rs.addHelpToken;
   resetParentRefs();
 }
 
@@ -100,23 +102,24 @@ void Command::_moveAssign(Command&& rs) {
     return;
   }
   _initIvars();
-  name               = std::move(rs.name);
-  description        = std::move(rs.description);
-  syntax             = std::move(rs.syntax);
-  tag                = std::move(rs.tag);
-  commands           = std::move(rs.commands);
-  optionDefinitions  = std::move(rs.optionDefinitions);
-  optionsHelper      = std::move(rs.optionsHelper);
-  settings           = std::move(rs.settings);
-  parser             = std::move(rs.parser);
-  runBlock           = std::move(rs.runBlock);
-  runFunction        = std::move(rs.runFunction);
-  nameWrapper        = std::move(rs.nameWrapper);
-  _isAppCommand      = std::move(rs._isAppCommand);
-  _identifier        = std::move(rs._identifier);
-  _needsOptionsReset = std::move(rs._needsOptionsReset);
-  parent             = std::move(rs.parent);
-  addHelpToken       = std::move(rs.addHelpToken);
+  name                    = std::move(rs.name);
+  description             = std::move(rs.description);
+  syntax                  = std::move(rs.syntax);
+  tag                     = std::move(rs.tag);
+  commands                = std::move(rs.commands);
+  optionDefinitions       = std::move(rs.optionDefinitions);
+  globalOptionDefinitions = std::move(rs.globalOptionDefinitions);
+  optionsHelper           = std::move(rs.optionsHelper);
+  settings                = std::move(rs.settings);
+  parser                  = std::move(rs.parser);
+  runBlock                = std::move(rs.runBlock);
+  runFunction             = std::move(rs.runFunction);
+  nameWrapper             = std::move(rs.nameWrapper);
+  _isAppCommand           = std::move(rs._isAppCommand);
+  _identifier             = std::move(rs._identifier);
+  _needsOptionsReset      = std::move(rs._needsOptionsReset);
+  parent                  = std::move(rs.parent);
+  addHelpToken            = std::move(rs.addHelpToken);
   rs.clear();
   resetParentRefs();
 }
@@ -191,15 +194,6 @@ std::size_t Command::hash() const {
   return seed;
 }
 
-int Command::generationDepth() const                                { return (_isAppCommand || (parent == nullptr)) ? 0 : parent->generationDepth() + 1; }
-void Command::setParent(Command& p)                                 {  parent = &p; }
-bool Command::hasChildren() const                                   { return count() != 0; }
-
-Command::iterator Command::begin()                                  { return commands.begin(); }
-Command::iterator Command::end()                                    { return commands.end(); }
-Command::const_iterator Command::cbegin() const                     { return commands.cbegin(); }
-Command::const_iterator Command::cend() const                       { return commands.cend(); }
-
 void Command::resetParentRefs() {
   if (!hasChildren()) return;
   for (iterator i = begin(); i != end(); i++) {
@@ -208,14 +202,23 @@ void Command::resetParentRefs() {
   }
 }
 
-Command& Command::operator [](const StringRef& _n)                     { return *command(_n, true); }
-const Command& Command::operator[](const StringRef& _n) const          { return *find(_n); }
-bool Command::hasCommand(const StringRef& name) const                  { return find(name) != cend(); }
-bool Command::hasCommand(const Command& rs) const                   { return find(rs) != cend(); }
-Command::iterator Command::find(const Command& cmd)                 { return std::find(begin(), end(), cmd); }
-Command::const_iterator Command::find(const Command& cmd) const     { return std::find(cbegin(), cend(), cmd); }
-Command::iterator Command::find(const StringRef& name)                 { Command cmd = namedWrapper(name); return find(cmd); }
-Command::const_iterator Command::find(const StringRef& name) const     { Command cmd = namedWrapper(name); return find(cmd); }
+int Command::generationDepth() const                                    { return (_isAppCommand || (parent == nullptr)) ? 0 : parent->generationDepth() + 1; }
+void Command::setParent(Command& p)                                     {  parent = &p; }
+bool Command::hasChildren() const                                       { return count() != 0; }
+
+Command::iterator Command::begin()                                      { return commands.begin(); }
+Command::iterator Command::end()                                        { return commands.end(); }
+Command::const_iterator Command::cbegin() const                         { return commands.cbegin(); }
+Command::const_iterator Command::cend() const                           { return commands.cend(); }
+
+Command& Command::operator [](const StringRef& _n)                      { return *command(_n, true); }
+const Command& Command::operator[](const StringRef& _n) const           { return *find(_n); }
+bool Command::hasCommand(const StringRef& name) const                   { return find(name) != cend(); }
+bool Command::hasCommand(const Command& rs) const                       { return find(rs) != cend(); }
+Command::iterator Command::find(const Command& cmd)                     { return std::find(begin(), end(), cmd); }
+Command::const_iterator Command::find(const Command& cmd) const         { return std::find(cbegin(), cend(), cmd); }
+Command::iterator Command::find(const StringRef& name)                  { Command cmd = namedWrapper(name); return find(cmd); }
+Command::const_iterator Command::find(const StringRef& name) const      { Command cmd = namedWrapper(name); return find(cmd); }
 
 Command::iterator Command::search(const StringRef& name) {
   iterator i = find(name);
@@ -326,30 +329,37 @@ Command::add_result Command::addCommand(Command&& c) {
   return {i,added};
 }
 
-Command::iterator Command::removeCommand(const Command& _c)                                 { return commands.erase(find(_c.name)); }
-Command::iterator Command::addCommands(CommandVector& _c)                                   { return commands.insert(cend(), _c.begin(), _c.end()); }
-Command::size_type Command::count() const                                                   { return commands.size(); }
+Command::iterator Command::removeCommand(const Command& _c)                                       { return commands.erase(find(_c.name)); }
+Command::iterator Command::addCommands(CommandVector& _c)                                         { return commands.insert(cend(), _c.begin(), _c.end()); }
+Command::size_type Command::count() const                                                         { return commands.size(); }
 
-void Command::setOptions(const OptionDefinitionVector& rs)                                  { for (auto const& opt:rs) addOption(opt); _needsOptionsReset = true; }
-void Command::addOption(const GBOptionDefinition& rs)                                       { optionDefinitions.push_back(rs); _needsOptionsReset = true; }
-void Command::removeOption(const GBOptionDefinition& rs)                                    { optionDefinitions.remove(rs); _needsOptionsReset = true; }
-void Command::removeOption(OptionDefinitionVector::size_type __n)                           { optionDefinitions.remove(__n); _needsOptionsReset = true; }
-GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __n)                { return optionDefinitions[__n]; }
-const GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __n) const    { return optionDefinitions[__n]; }
+void Command::setOptions(const OptionDefinitionVector& rs)                                        { optionDefinitions = rs; _needsOptionsReset = true; }
+void Command::addOption(const GBOptionDefinition& rs)                                             { optionDefinitions.push_back(rs); _needsOptionsReset = true; }
+void Command::removeOption(const GBOptionDefinition& rs)                                          { optionDefinitions.remove(rs); _needsOptionsReset = true; }
+void Command::removeOption(OptionDefinitionVector::size_type __n)                                 { optionDefinitions.remove(__n); _needsOptionsReset = true; }
+GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __n)                      { return optionDefinitions[__n]; }
+const GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __n) const          { return optionDefinitions[__n]; }
 
-void Command::setSyntaxes(const StringVector& rs)                                           { for (auto const& opt:rs) addSyntax(opt); }
-void Command::addSyntax(const StringRef& rs)                                                   { syntax.push_back(rs); }
-void Command::removeSyntax(const StringRef& rs)                                                { syntax.erase(std::remove(syntax.begin(), syntax.end(), rs), syntax.end()); }
-void Command::removeSyntax(StringVector::size_type __n)                                     { if (__n >= syntax.size()) return; removeSyntax(syntax.at(__n)); }
-StringRef& Command::syntaxAt(StringVector::size_type __n)                                      { return syntax[__n]; }
-const StringRef& Command::syntaxAt(StringVector::size_type __n) const                          { return syntax[__n]; }
+void Command::setGlobalOptions(const OptionDefinitionVector& rs)                                  { globalOptionDefinitions = rs; _needsOptionsReset = true; }
+void Command::addGlobalOption(const GBOptionDefinition& rs)                                       { globalOptionDefinitions.push_back(rs); _needsOptionsReset = true; }
+void Command::removeGlobalOption(const GBOptionDefinition& rs)                                    { globalOptionDefinitions.remove(rs); _needsOptionsReset = true; }
+void Command::removeGlobalOption(OptionDefinitionVector::size_type __n)                           { globalOptionDefinitions.remove(__n); _needsOptionsReset = true; }
+GBOptionDefinition& Command::globalOptionAt(OptionDefinitionVector::size_type __n)                { return globalOptionDefinitions[__n]; }
+const GBOptionDefinition& Command::globalOptionAt(OptionDefinitionVector::size_type __n) const    { return globalOptionDefinitions[__n]; }
+
+void Command::setSyntaxes(const StringVector& rs)                                                 { syntax = rs; }
+void Command::addSyntax(const StringRef& rs)                                                      { syntax.push_back(rs); }
+void Command::removeSyntax(const StringRef& rs)                                                   { syntax.erase(std::remove(syntax.begin(), syntax.end(), rs), syntax.end()); }
+void Command::removeSyntax(StringVector::size_type __n)                                           { if (__n >= syntax.size()) return; removeSyntax(syntax.at(__n)); }
+StringRef& Command::syntaxAt(StringVector::size_type __n)                                         { return syntax[__n]; }
+const StringRef& Command::syntaxAt(StringVector::size_type __n) const                             { return syntax[__n]; }
 
 StringRef Command::commandString() { return (_isAppCommand || (parent == nullptr)) ? name : parent->commandString() + " " + this->name; }
 
-void Command::setName(const StringRef& rs)                                                     { if (rs.valid()) name = rs; _initNameDeps(); }
-StringRef Command::getName() const                                                             { return name; }
-void Command::setDescription(CommandStringBlock descriptionBlock)                           { if (descriptionBlock != NULL) description = descriptionBlock(*this); }
-StringRef Command::getDescription() const                                                      { return description; }
+void Command::setName(const StringRef& rs)                                                        { if (rs.valid()) name = rs; _initNameDeps(); }
+StringRef Command::getName() const                                                                { return name; }
+void Command::setDescription(CommandStringBlock descriptionBlock)                                 { if (descriptionBlock != NULL) description = descriptionBlock(*this); }
+StringRef Command::getDescription() const                                                         { return description; }
 void Command::setRunBlock(CommandRunBlock __r) {
   runBlock = __r;
   if (runBlock != NULL) {
@@ -381,17 +391,16 @@ void Command::registerDefinitions() {
   if (!_needsOptionsReset) return;
   _needsOptionsReset = false;
 
-  if (!settings) {
-    settings = [GBSettings commandSettingsWithName:name parent:nil];
-  }
+  if (!settings) settings = [GBSettings commandSettingsWithName:name parent:nil];
 
   optionsHelper = [GBOptionsHelper new];
   parser = [GBCommandLineParser new];
 
-  optionsHelper.applicationVersion = ^{ return VERSION; };
-  optionsHelper.applicationBuild = ^{ return BUILD; };
-
   for (auto const& def:optionDefinitions) {
+    [optionsHelper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
+  }
+
+  for (auto const& def:globalOptionDefinitions) {
     [optionsHelper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
   }
 
@@ -509,10 +518,13 @@ StringRef Command::helpString() {
   }
 
   // List of options
-  if (optionDefinitions.size()) {
+  if (optionDefinitions.size() || globalOptionDefinitions.size()) {
     help.addNewline();
     help += @"OPTIONS:";
-    help += optionDefinitions.helpString(spacing);
+    StringRef options = optionDefinitions.helpString(spacing);
+    if (options.size()) options.addNewline();
+    options += globalOptionDefinitions.helpString(spacing);
+    help += options;
   }
 
   // Footer
@@ -554,6 +566,7 @@ void Command::clear() {
   name.zero();
   commands.clear();
   optionDefinitions.clear();
+  globalOptionDefinitions.clear();
   optionsHelper = nil;
   settings = nil;
   parser = nil;

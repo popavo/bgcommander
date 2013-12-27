@@ -8,7 +8,7 @@
 @class GBCommandLineParser;
 
 #define CommandIvars \
-  name(), description(), syntax(), tag(), commands(), optionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), runBlock(NULL), runFunction(NULL), \
+  name(), description(), tag(), commands(), syntax(), optionDefinitions(), globalOptionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), runBlock(NULL), runFunction(NULL), \
   nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr), addHelpToken()
 
 BG_NAMESPACE
@@ -34,8 +34,9 @@ public:
   NSInteger tag;
 
   CommandVector commands;
-  OptionDefinitionVector optionDefinitions;
   StringVector syntax;
+  OptionDefinitionVector optionDefinitions;
+  OptionDefinitionVector globalOptionDefinitions;
 
   GBOptionsHelper* optionsHelper;
   GBSettings* settings;
@@ -124,6 +125,13 @@ public:
   void removeOption(OptionDefinitionVector::size_type __n);
   GBOptionDefinition& optionAt(OptionDefinitionVector::size_type __n);
   const GBOptionDefinition& optionAt(OptionDefinitionVector::size_type __n) const;
+
+  void setGlobalOptions(const OptionDefinitionVector& rs);
+  void addGlobalOption(const GBOptionDefinition& rs);
+  void removeGlobalOption(const GBOptionDefinition& rs);
+  void removeGlobalOption(OptionDefinitionVector::size_type __n);
+  GBOptionDefinition& globalOptionAt(OptionDefinitionVector::size_type __n);
+  const GBOptionDefinition& globalOptionAt(OptionDefinitionVector::size_type __n) const;
 
   void setSyntaxes(const StringVector& rs);
   void addSyntax(const StringRef& rs);
