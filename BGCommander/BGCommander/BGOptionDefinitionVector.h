@@ -11,6 +11,7 @@ public:
   BGOptionDefinitionVector() : std::vector<GBOptionDefinition>() { }
   BGOptionDefinitionVector(std::initializer_list<value_type> __il) : std::vector<GBOptionDefinition>(__il) { }
 
+  bool contains(const_reference rs)       { return std::find(cbegin(), cend(), rs) != cend(); }
   void add(const_reference rs)            { push_back(rs); }
   iterator remove(const_reference rs)     { return erase(std::remove(begin(), end(), rs), end()); }
   iterator remove(size_type rs)           { if (rs >= size()) return end(); return remove(at(rs)); }
