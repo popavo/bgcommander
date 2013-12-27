@@ -10,7 +10,6 @@
   name(), description(), syntax(), tag(), commands(), optionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), runBlock(NULL), runFunction(NULL), \
   nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr), addHelpToken()
 
-
 class BGCommand {
 public:
   typedef std::vector<BGCommand> BGCommandVector;
@@ -52,7 +51,7 @@ protected:
 
 private:
   BGCommand(const std::string& n) { _commonInit(n.c_str(), true); }
-  static BGCommand& namedWrapper(const BGString& n) { return *(new BGCommand(std::string(n.c_str()))); }
+  static BGCommand namedWrapper(const BGString& n) { return BGCommand(std::string(n.c_str())); }
 
 public:
   static BGCommand& sharedAppCommand();
@@ -110,7 +109,7 @@ public:
   iterator      removeCommand(const BGCommand& _c);
   iterator      addCommands(BGCommandVector& _c);
 
-  BGCommandVector::size_type count() const;
+  size_type count() const;
 
   void resetParentRefs();
 
@@ -148,12 +147,12 @@ public:
 
   BGCommand& parseCommand(BGStringVector& args);
 
-  BGString& helpString();
+  BGString helpString();
   void printHelp(int exitVal = 0);
   void printVersion(int exitVal = 0);
   void printSettings(int exitVal = INT32_MIN);
 
-  BGString& inspect(int leadingSpaces = 0) const;
+  BGString inspect(int leadingSpaces = 0) const;
 
 private:
   void _initIvars();
@@ -165,7 +164,6 @@ private:
   void _copyAssign(const BGCommand& rs);
   void _moveAssign(BGCommand&& rs);
 
-protected:
   friend class BGCommander;
 };
 

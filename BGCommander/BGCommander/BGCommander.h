@@ -5,7 +5,7 @@
 
 class BGCommander;
 
-extern BGCommander commander;
+extern BGCommander& commander;
 
 class BGCommander {
 public:
@@ -16,10 +16,8 @@ public:
   typedef typename BGCommand::search_depth search_depth;
   typedef typename BGCommand::const_search_depth const_search_depth;
 
-protected:
-  int runResult;
-
 private:
+  int runResult;
   BGCommander();
 
 public:

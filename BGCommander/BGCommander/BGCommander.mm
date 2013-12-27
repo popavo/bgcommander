@@ -1,6 +1,6 @@
 #import "BGCommander.h"
 
-BGCommander commander = BGCommander::sharedCommander();
+BGCommander& commander = BGCommander::sharedCommander();
 
 BGCommander& BGCommander::sharedCommander() {
   static BGCommander _sharedCommander;

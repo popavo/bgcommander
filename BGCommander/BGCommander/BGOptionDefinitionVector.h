@@ -15,13 +15,14 @@ public:
   iterator remove(const_reference rs)     { return erase(std::remove(begin(), end(), rs), end()); }
   iterator remove(size_type rs)           { if (rs >= size()) return end(); return remove(at(rs)); }
 
-  BGString& helpString(int leadingWhiteSpace = 4) {
+  BGString helpString(int leadingWhiteSpace = 4) {
+    BGString help;
     if (size()) {
       GBOptionsHelper* helper = [GBOptionsHelper new];
       [helper registerOptionsFromDefinitions:this->data() count:this->size()];
-      return *(new BGString([helper helpStringWithLeadingSpaces:leadingWhiteSpace]));
+      help += [helper helpStringWithLeadingSpaces:leadingWhiteSpace];
     }
-    return *(new BGString());
+    return help;
   }
 };
 

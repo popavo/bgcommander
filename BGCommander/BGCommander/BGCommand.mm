@@ -125,9 +125,7 @@ void BGCommand::_moveAssign(BGCommand&& rs) {
   resetParentRefs();
 }
 
-BGCommand::BGCommand(BGCommand&& rs) {
-  _moveAssign(std::move(rs));
-}
+BGCommand::BGCommand(BGCommand&& rs) { _moveAssign(std::move(rs)); }
 
 BGCommand::BGCommand(const BGCommand& rs) { _copyAssign(rs); _finishInit(); }
 
@@ -220,8 +218,8 @@ bool BGCommand::hasCommand(const BGString& name) const                    { retu
 bool BGCommand::hasCommand(const BGCommand& rs) const                     { return find(rs) != cend(); }
 BGCommand::iterator BGCommand::find(const BGCommand& cmd)                 { return std::find(begin(), end(), cmd); }
 BGCommand::const_iterator BGCommand::find(const BGCommand& cmd) const     { return std::find(cbegin(), cend(), cmd); }
-BGCommand::iterator BGCommand::find(const BGString& name)                 { BGCommand& cmd = namedWrapper(name); return find(cmd); }
-BGCommand::const_iterator BGCommand::find(const BGString& name) const     { BGCommand& cmd = namedWrapper(name); return find(cmd); }
+BGCommand::iterator BGCommand::find(const BGString& name)                 { BGCommand cmd = namedWrapper(name); return find(cmd); }
+BGCommand::const_iterator BGCommand::find(const BGString& name) const     { BGCommand cmd = namedWrapper(name); return find(cmd); }
 
 BGCommand::iterator BGCommand::search(const BGString& name) {
   iterator i = find(name);
@@ -309,32 +307,6 @@ BGCommand::add_result BGCommand::addCommand(const BGCommand& c) {
     if (i != end()) {
       i->setParent(*this);
       added = true;
-#if TESTING
-      // Command %s (%p) added subcommand: %s (%p)
-      BGString addMsg("Command");
-      addMsg.setPreAppend(@" ");
-
-      addMsg += name;
-
-      if (_identifier) {
-        addMsg.appendFormat(@"(%lu)", _identifier);
-      } else {
-        addMsg.appendFormat(@"(%p)", this);
-      }
-
-      addMsg += "added subcommand:";
-      addMsg += c.name;
-
-      if (i->_identifier) {
-        addMsg.appendFormat(@"(%lu)", i->_identifier);
-      } else {
-        addMsg.appendFormat(@"(%p)", &(*i));
-      }
-
-      addMsg += "\n";
-
-      addMsg.print();
-#endif
     }
   }
 
@@ -343,7 +315,7 @@ BGCommand::add_result BGCommand::addCommand(const BGCommand& c) {
 
 BGCommand::iterator BGCommand::removeCommand(const BGCommand& _c)                               { return commands.erase(find(_c.name)); }
 BGCommand::iterator BGCommand::addCommands(BGCommandVector& _c)                                 { return commands.insert(cend(), _c.begin(), _c.end()); }
-BGCommandVector::size_type BGCommand::count() const                                             { return commands.size(); }
+BGCommand::size_type BGCommand::count() const                                                   { return commands.size(); }
 
 void BGCommand::setOptions(const BGOptionDefinitionVector& rs)                                  { for (auto const& opt:rs) addOption(opt); _needsOptionsReset = true; }
 void BGCommand::addOption(const GBOptionDefinition& rs)                                         { optionDefinitions.push_back(rs); _needsOptionsReset = true; }
@@ -475,7 +447,7 @@ BGCommand& BGCommand::parseCommand(BGStringVector& args) {
   return cmd->parseCommand(args);
 }
 
-BGString& BGCommand::helpString() {
+BGString BGCommand::helpString() {
   registerDefinitions();
 
   int spacing = 4;
@@ -539,7 +511,7 @@ BGString& BGCommand::helpString() {
 
   // Footer
 
-  return *(new BGString(help));
+  return help;
 }
 
 void BGCommand::printHelp(int exitVal) {
@@ -586,7 +558,7 @@ void BGCommand::clear() {
   addHelpToken = 0;
 }
 
-BGString& BGCommand::inspect(int leadingSpaces) const {
+BGString BGCommand::inspect(int leadingSpaces) const {
   BGString info;
   int gen = generationDepth();
   int prespace = leadingSpaces * (gen - 1);
@@ -615,5 +587,5 @@ BGString& BGCommand::inspect(int leadingSpaces) const {
     }
   }
 
-  return *(new BGString(info));
+  return info;
 }
