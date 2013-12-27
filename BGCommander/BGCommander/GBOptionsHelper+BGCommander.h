@@ -12,5 +12,4 @@
 -(NSString*)valuesStringFromSettings:(GBSettings*)settings;
 -(NSString*)valuesStringFromSettings:(GBSettings*)settings includeArguments:(BOOL)includeArgs;
 
-
 @end

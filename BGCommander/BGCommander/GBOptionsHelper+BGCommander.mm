@@ -1,5 +1,33 @@
 #import "GBOptionsHelper+BGCommander.h"
-#import "GBOptionsHelper.m"
+
+@interface OptionDefinition : NSObject
+@property (nonatomic, assign) char shortOption;
+@property (nonatomic, copy) NSString *longOption;
+@property (nonatomic, copy) NSString *description;
+@property (nonatomic, assign) GBOptionFlags flags;
+@end
+
+@interface GBOptionsHelper ()
+- (void)replacePlaceholdersAndPrintStringFromBlock:(GBOptionStringBlock)block;
+- (void)enumerateOptions:(void(^)(OptionDefinition *definition, BOOL *stop))handler;
+- (NSUInteger)requirements:(OptionDefinition *)definition;
+- (BOOL)isSeparator:(OptionDefinition *)definition;
+- (BOOL)isCmdLine:(OptionDefinition *)definition;
+- (BOOL)isPrint:(OptionDefinition *)definition;
+- (BOOL)isHelp:(OptionDefinition *)definition;
+@property (nonatomic, readonly) NSString *applicationNameFromBlockOrDefault;
+@property (nonatomic, readonly) NSString *applicationVersionFromBlockOrNil;
+@property (nonatomic, readonly) NSString *applicationBuildFromBlockOrNil;
+@property (nonatomic, strong) NSMutableArray *registeredOptions;
+@end
+
+#define GB_UPDATE_MAX_LENGTH(value) \
+  NSNumber *length = [lengths objectAtIndex:columns.count]; \
+  NSUInteger maxLength = MAX(value.length, length.unsignedIntegerValue); \
+  if (maxLength > length.unsignedIntegerValue) { \
+    NSNumber *newMaxLength = [NSNumber numberWithUnsignedInteger:maxLength]; \
+    [lengths replaceObjectAtIndex:columns.count withObject:newMaxLength]; \
+  }
 
 @implementation GBOptionsHelper (BGCommander)
 

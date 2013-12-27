@@ -8,18 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-#import "GBSettings.h"
-#import "GBOptionsHelper.h"
-#import "GBCommandLineParser.h"
-
-#import "BGCommanderDefines.h"
-
 #if defined(__cplusplus)
-
-#import "NSStringHelpers.h"
-#import "BGCommanderHelpers.h"
-
-#import "BGCommand.h"
 #import "BGCommander.h"
 #endif
 

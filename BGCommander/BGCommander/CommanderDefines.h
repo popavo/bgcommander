@@ -3,6 +3,9 @@
 
 #define TESTING 0
 
+#define BG_NAMESPACE namespace bg {
+#define BG_NAMESPACE_END }
+
 #ifndef __has_attribute         // Optional of course.
 # define __has_attribute(x) 0 // Compatibility with non-clang compilers.
 #endif
@@ -40,23 +43,32 @@
 #define BGCOMMANDER_STR(x) #x
 #define BGCOMMANDER_STRINGIFY(macro) BGCOMMANDER_STR(macro)
 
-#if !defined(VERSION_STR)
+#if !defined(VERSION_STR) && !defined(VERSION)
 # if defined(BGCOMMANDER_VERSION)
 #  define VERSION_STR BGCOMMANDER_STRINGIFY(BGCOMMANDER_VERSION)
+#  define VERSION (@ VERSION_STR)
+# else
+#  define VERSION_STR BGCOMMANDER_STRINGIFY(0)
 #  define VERSION (@ VERSION_STR)
 # endif
 #endif
 
-#if !defined(BUILD_STR)
+#if !defined(BUILD_STR) && !defined(BUILD)
 # if defined(BGCOMMANDER_BUILD)
 #  define BUILD_STR BGCOMMANDER_STRINGIFY(BGCOMMANDER_BUILD)
+#  define BUILD (@ BUILD_STR)
+# else
+#  define BUILD_STR BGCOMMANDER_STRINGIFY(0)
 #  define BUILD (@ BUILD_STR)
 # endif
 #endif
 
-#if !defined(NAME_STR)
+#if !defined(NAME_STR) && !defined(NAME)
 # if defined(BGCOMMANDER_NAME)
 #  define NAME_STR BGCOMMANDER_STRINGIFY(BGCOMMANDER_NAME)
+#  define NAME (@ NAME_STR)
+# else
+#  define NAME_STR BGCOMMANDER_STRINGIFY(BGCommander)
 #  define NAME (@ NAME_STR)
 # endif
 #endif

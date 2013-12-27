@@ -9,14 +9,14 @@
 /* Begin PBXBuildFile section */
 		D38A45531859623B00C104F7 /* GBCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D38A454E1859623B00C104F7 /* GBCommandLineParser.m */; };
 		D38A45551859623B00C104F7 /* GBSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = D38A45521859623B00C104F7 /* GBSettings.m */; };
-		D38A45711859632100C104F7 /* BGCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = D38A45591859632100C104F7 /* BGCommand.mm */; };
-		D38A45721859632100C104F7 /* BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D38A455B1859632100C104F7 /* BGCommander.mm */; };
+		D39E6A71186E03630054F7F3 /* Command.mm in Sources */ = {isa = PBXBuildFile; fileRef = D39E6A63186E03630054F7F3 /* Command.mm */; };
+		D39E6A72186E03630054F7F3 /* Commander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D39E6A65186E03630054F7F3 /* Commander.mm */; };
+		D39E6A73186E03630054F7F3 /* GBOptionsHelper+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D39E6A69186E03630054F7F3 /* GBOptionsHelper+BGCommander.mm */; };
+		D39E6A74186E03630054F7F3 /* GBSettings+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D39E6A6B186E03630054F7F3 /* GBSettings+BGCommander.mm */; };
+		D39E6A75186E03630054F7F3 /* StringRef.mm in Sources */ = {isa = PBXBuildFile; fileRef = D39E6A70186E03630054F7F3 /* StringRef.mm */; };
 		D39E8927184D2AFC00E16A87 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A10E70184CF6B800287D5E /* Cocoa.framework */; };
 		D3A10E61184CF61200287D5E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3A10E60184CF61200287D5E /* main.mm */; };
 		D3A10E65184CF61200287D5E /* BGCommander.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D3A10E64184CF61200287D5E /* BGCommander.1 */; };
-		D3C55374186038C700753234 /* BGString.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3C5536E186038C700753234 /* BGString.mm */; };
-		D3C55375186038C700753234 /* GBOptionsHelper+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3C55370186038C700753234 /* GBOptionsHelper+BGCommander.mm */; };
-		D3C55376186038C700753234 /* GBSettings+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3C55372186038C700753234 /* GBSettings+BGCommander.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,12 +49,22 @@
 		D38A45501859623B00C104F7 /* GBOptionsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GBOptionsHelper.m; path = gbcli/GBCli/src/GBOptionsHelper.m; sourceTree = SOURCE_ROOT; };
 		D38A45511859623B00C104F7 /* GBSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GBSettings.h; path = gbcli/GBCli/src/GBSettings.h; sourceTree = SOURCE_ROOT; };
 		D38A45521859623B00C104F7 /* GBSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GBSettings.m; path = gbcli/GBCli/src/GBSettings.m; sourceTree = SOURCE_ROOT; };
-		D38A45581859632100C104F7 /* BGCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommand.h; sourceTree = "<group>"; };
-		D38A45591859632100C104F7 /* BGCommand.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BGCommand.mm; sourceTree = "<group>"; };
-		D38A455A1859632100C104F7 /* BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommander.h; sourceTree = "<group>"; };
-		D38A455B1859632100C104F7 /* BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BGCommander.mm; sourceTree = "<group>"; };
-		D38A455C1859632100C104F7 /* BGCommanderDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommanderDefines.h; sourceTree = "<group>"; };
-		D38A455D1859632100C104F7 /* BGOptionDefinitionVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGOptionDefinitionVector.h; sourceTree = "<group>"; };
+		D39E6A61186E03630054F7F3 /* BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommander.h; sourceTree = "<group>"; };
+		D39E6A62186E03630054F7F3 /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
+		D39E6A63186E03630054F7F3 /* Command.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Command.mm; sourceTree = "<group>"; };
+		D39E6A64186E03630054F7F3 /* Commander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Commander.h; sourceTree = "<group>"; };
+		D39E6A65186E03630054F7F3 /* Commander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Commander.mm; sourceTree = "<group>"; };
+		D39E6A66186E03630054F7F3 /* CommanderDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommanderDefines.h; sourceTree = "<group>"; };
+		D39E6A67186E03630054F7F3 /* CommanderHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommanderHelpers.h; sourceTree = "<group>"; };
+		D39E6A68186E03630054F7F3 /* GBOptionsHelper+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBOptionsHelper+BGCommander.h"; sourceTree = "<group>"; };
+		D39E6A69186E03630054F7F3 /* GBOptionsHelper+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBOptionsHelper+BGCommander.mm"; sourceTree = "<group>"; };
+		D39E6A6A186E03630054F7F3 /* GBSettings+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBSettings+BGCommander.h"; sourceTree = "<group>"; };
+		D39E6A6B186E03630054F7F3 /* GBSettings+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBSettings+BGCommander.mm"; sourceTree = "<group>"; };
+		D39E6A6C186E03630054F7F3 /* HashHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashHelpers.h; sourceTree = "<group>"; };
+		D39E6A6D186E03630054F7F3 /* NSStringHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringHelpers.h; sourceTree = "<group>"; };
+		D39E6A6E186E03630054F7F3 /* OptionDefinitionVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionDefinitionVector.h; sourceTree = "<group>"; };
+		D39E6A6F186E03630054F7F3 /* StringRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringRef.h; sourceTree = "<group>"; };
+		D39E6A70186E03630054F7F3 /* StringRef.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringRef.mm; sourceTree = "<group>"; };
 		D39E8894184D182800E16A87 /* GBCli.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GBCli.xcodeproj; path = gbcli/GBCli.xcodeproj; sourceTree = "<group>"; };
 		D39E88A8184D1AA700E16A87 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		D3A10E5A184CF61200287D5E /* BGCommander */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BGCommander; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,14 +79,6 @@
 		D3A10EE2184CFDB600287D5E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D3A10EF2184D056B00287D5E /* BGCommander.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BGCommander.xcconfig; sourceTree = "<group>"; };
 		D3A10EF5184D056B00287D5E /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
-		D3C5536C186038C700753234 /* BGCommanderHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommanderHelpers.h; sourceTree = "<group>"; };
-		D3C5536D186038C700753234 /* BGString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGString.h; sourceTree = "<group>"; };
-		D3C5536E186038C700753234 /* BGString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BGString.mm; sourceTree = "<group>"; };
-		D3C5536F186038C700753234 /* GBOptionsHelper+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBOptionsHelper+BGCommander.h"; sourceTree = "<group>"; };
-		D3C55370186038C700753234 /* GBOptionsHelper+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBOptionsHelper+BGCommander.mm"; sourceTree = "<group>"; };
-		D3C55371186038C700753234 /* GBSettings+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBSettings+BGCommander.h"; sourceTree = "<group>"; };
-		D3C55372186038C700753234 /* GBSettings+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBSettings+BGCommander.mm"; sourceTree = "<group>"; };
-		D3C55373186038C700753234 /* NSStringHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringHelpers.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,20 +109,22 @@
 		D38A45571859632100C104F7 /* BGCommander */ = {
 			isa = PBXGroup;
 			children = (
-				D38A45581859632100C104F7 /* BGCommand.h */,
-				D38A45591859632100C104F7 /* BGCommand.mm */,
-				D38A455A1859632100C104F7 /* BGCommander.h */,
-				D38A455B1859632100C104F7 /* BGCommander.mm */,
-				D3C5536D186038C700753234 /* BGString.h */,
-				D3C5536E186038C700753234 /* BGString.mm */,
-				D38A455D1859632100C104F7 /* BGOptionDefinitionVector.h */,
-				D3C5536C186038C700753234 /* BGCommanderHelpers.h */,
-				D3C5536F186038C700753234 /* GBOptionsHelper+BGCommander.h */,
-				D3C55370186038C700753234 /* GBOptionsHelper+BGCommander.mm */,
-				D3C55371186038C700753234 /* GBSettings+BGCommander.h */,
-				D3C55372186038C700753234 /* GBSettings+BGCommander.mm */,
-				D3C55373186038C700753234 /* NSStringHelpers.h */,
-				D38A455C1859632100C104F7 /* BGCommanderDefines.h */,
+				D39E6A61186E03630054F7F3 /* BGCommander.h */,
+				D39E6A62186E03630054F7F3 /* Command.h */,
+				D39E6A63186E03630054F7F3 /* Command.mm */,
+				D39E6A64186E03630054F7F3 /* Commander.h */,
+				D39E6A65186E03630054F7F3 /* Commander.mm */,
+				D39E6A66186E03630054F7F3 /* CommanderDefines.h */,
+				D39E6A67186E03630054F7F3 /* CommanderHelpers.h */,
+				D39E6A68186E03630054F7F3 /* GBOptionsHelper+BGCommander.h */,
+				D39E6A69186E03630054F7F3 /* GBOptionsHelper+BGCommander.mm */,
+				D39E6A6A186E03630054F7F3 /* GBSettings+BGCommander.h */,
+				D39E6A6B186E03630054F7F3 /* GBSettings+BGCommander.mm */,
+				D39E6A6C186E03630054F7F3 /* HashHelpers.h */,
+				D39E6A6D186E03630054F7F3 /* NSStringHelpers.h */,
+				D39E6A6E186E03630054F7F3 /* OptionDefinitionVector.h */,
+				D39E6A6F186E03630054F7F3 /* StringRef.h */,
+				D39E6A70186E03630054F7F3 /* StringRef.mm */,
 			);
 			path = BGCommander;
 			sourceTree = "<group>";
@@ -271,14 +275,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3C55374186038C700753234 /* BGString.mm in Sources */,
-				D38A45721859632100C104F7 /* BGCommander.mm in Sources */,
-				D38A45711859632100C104F7 /* BGCommand.mm in Sources */,
+				D39E6A75186E03630054F7F3 /* StringRef.mm in Sources */,
 				D38A45551859623B00C104F7 /* GBSettings.m in Sources */,
+				D39E6A71186E03630054F7F3 /* Command.mm in Sources */,
 				D38A45531859623B00C104F7 /* GBCommandLineParser.m in Sources */,
-				D3C55375186038C700753234 /* GBOptionsHelper+BGCommander.mm in Sources */,
-				D3C55376186038C700753234 /* GBSettings+BGCommander.mm in Sources */,
+				D39E6A73186E03630054F7F3 /* GBOptionsHelper+BGCommander.mm in Sources */,
 				D3A10E61184CF61200287D5E /* main.mm in Sources */,
+				D39E6A74186E03630054F7F3 /* GBSettings+BGCommander.mm in Sources */,
+				D39E6A72186E03630054F7F3 /* Commander.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

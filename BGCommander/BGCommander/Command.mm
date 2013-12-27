@@ -1,23 +1,24 @@
-#import "BGCommand.h"
+#import "Command.h"
 #import <utility>
-#import "GBSettings+BGCommander.h"
 
-BGCommand& BGCommand::AppCommand = BGCommand::sharedAppCommand();
+BG_NAMESPACE
 
-BGCommand& BGCommand::sharedAppCommand() {
-  static BGCommand _sharedAppCommand([[NSProcessInfo processInfo] processName]);
+Command& Command::AppCommand = Command::sharedAppCommand();
+
+Command& Command::sharedAppCommand() {
+  static Command _sharedAppCommand([[NSProcessInfo processInfo] processName]);
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
     _sharedAppCommand.addOption({ 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint });
-    _sharedAppCommand.setRunBlock(^int(std::vector<BGString> args, GBSettings *options, BGCommand &command) {
+    _sharedAppCommand.setRunBlock(^int(std::vector<StringRef> args, GBSettings *options, Command &command) {
       return 0;
     });
   });
   return _sharedAppCommand;
 }
 
-void BGCommand::_initIvars() {
+void Command::_initIvars() {
   name = @"";
   if (nameWrapper) return;
   description = @"";
@@ -37,14 +38,14 @@ void BGCommand::_initIvars() {
   addHelpToken = 0;
 }
 
-void BGCommand::_initNameDeps() {
+void Command::_initNameDeps() {
   if (name.valid()) {
     _isAppCommand = name.is_equal([[NSProcessInfo processInfo] processName]);
     settings = [GBSettings commandSettingsWithName:name parent:nil];
   }
 }
 
-void BGCommand::_commonInit(const BGString& _s, bool _nw) {
+void Command::_commonInit(const StringRef& _s, bool _nw) {
   nameWrapper = _nw;
   _initIvars();
   name = _s;
@@ -58,14 +59,14 @@ void BGCommand::_commonInit(const BGString& _s, bool _nw) {
   optionsHelper.applicationBuild = ^{ return BUILD; };
 }
 
-void BGCommand::_finishInit() {
+void Command::_finishInit() {
   dispatch_once(&addHelpToken, ^{
     addOption({0, nil, @"Global options", GBOptionSeparator});
     addOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
   });
 }
 
-void BGCommand::_copyAssign(const BGCommand& rs) {
+void Command::_copyAssign(const Command& rs) {
   if (rs.nameWrapper) {
     name = rs.name;
     nameWrapper = rs.nameWrapper;
@@ -91,7 +92,7 @@ void BGCommand::_copyAssign(const BGCommand& rs) {
   resetParentRefs();
 }
 
-void BGCommand::_moveAssign(BGCommand&& rs) {
+void Command::_moveAssign(Command&& rs) {
   if (rs.nameWrapper) {
     name = std::move(rs.name);
     nameWrapper = std::move(rs.nameWrapper);
@@ -120,45 +121,45 @@ void BGCommand::_moveAssign(BGCommand&& rs) {
   resetParentRefs();
 }
 
-BGCommand::BGCommand(BGCommand&& rs) { _moveAssign(std::move(rs)); }
+Command::Command(Command&& rs) { _moveAssign(std::move(rs)); }
 
-BGCommand::BGCommand(const BGCommand& rs) { _copyAssign(rs); _finishInit(); }
+Command::Command(const Command& rs) { _copyAssign(rs); _finishInit(); }
 
-BGCommand::BGCommand(const BGString& _s, const BGString& _d, const BGOptionDefinitionVector& _o) {
+Command::Command(const StringRef& _s, const StringRef& _d, const OptionDefinitionVector& _o) {
   _commonInit(_s);
   description = _d;
   optionDefinitions = _o;
   _finishInit();
 }
 
-BGCommand::BGCommand(const_char _s, const BGString& _d, const BGOptionDefinitionVector& _o) {
+Command::Command(const_char _s, const StringRef& _d, const OptionDefinitionVector& _o) {
   _commonInit(_s);
   description = _d;
   optionDefinitions = _o;
   _finishInit();
 }
 
-BGCommand::BGCommand(NSString* _s, const BGString& _d, const BGOptionDefinitionVector& _o) {
+Command::Command(NSString* _s, const StringRef& _d, const OptionDefinitionVector& _o) {
   _commonInit(_s);
   description = _d;
   optionDefinitions = _o;
   _finishInit();
 }
 
-BGCommand& BGCommand::operator=(const BGCommand &rs) {
+Command& Command::operator=(const Command &rs) {
   _copyAssign(rs);
   _finishInit();
   return *this;
 }
 
-BGCommand& BGCommand::operator =(BGCommand&& rs) {
+Command& Command::operator =(Command&& rs) {
   _moveAssign(std::move(rs));
   return *this;
 }
 
-bool BGCommand::operator !() const { return !name; }
-bool BGCommand::valid() const { return !!*this; }
-bool BGCommand::is_equal(const BGCommand& rs) const {
+bool Command::operator !() const { return !name; }
+bool Command::valid() const { return !!*this; }
+bool Command::is_equal(const Command& rs) const {
   if (!rs) return false;
   if (nameWrapper || rs.nameWrapper) {
     return name.is_equal(rs.name);
@@ -166,11 +167,11 @@ bool BGCommand::is_equal(const BGCommand& rs) const {
   return (this == &rs) || (_identifier == rs._identifier);
 }
 
-bool BGCommand::isAppCommand() const { return _isAppCommand; }
+bool Command::isAppCommand() const { return _isAppCommand; }
 
-NSUInteger BGCommand::identifier() const { return _identifier; }
+NSUInteger Command::identifier() const { return _identifier; }
 
-std::size_t BGCommand::hash() const {
+std::size_t Command::hash() const {
   std::size_t seed = 0;
 
   hash_combine(seed, name);
@@ -190,16 +191,16 @@ std::size_t BGCommand::hash() const {
   return seed;
 }
 
-int BGCommand::generationDepth() const                                    { return (_isAppCommand || (parent == nullptr)) ? 0 : parent->generationDepth() + 1; }
-void BGCommand::setParent(BGCommand& p)                                   {  parent = &p; }
-bool BGCommand::hasChildren() const                                       { return count() != 0; }
+int Command::generationDepth() const                                { return (_isAppCommand || (parent == nullptr)) ? 0 : parent->generationDepth() + 1; }
+void Command::setParent(Command& p)                                 {  parent = &p; }
+bool Command::hasChildren() const                                   { return count() != 0; }
 
-BGCommand::iterator BGCommand::begin()                                    { return commands.begin(); }
-BGCommand::iterator BGCommand::end()                                      { return commands.end(); }
-BGCommand::const_iterator BGCommand::cbegin() const                       { return commands.cbegin(); }
-BGCommand::const_iterator BGCommand::cend() const                         { return commands.cend(); }
+Command::iterator Command::begin()                                  { return commands.begin(); }
+Command::iterator Command::end()                                    { return commands.end(); }
+Command::const_iterator Command::cbegin() const                     { return commands.cbegin(); }
+Command::const_iterator Command::cend() const                       { return commands.cend(); }
 
-void BGCommand::resetParentRefs() {
+void Command::resetParentRefs() {
   if (!hasChildren()) return;
   for (iterator i = begin(); i != end(); i++) {
     i->setParent(*this);
@@ -207,16 +208,16 @@ void BGCommand::resetParentRefs() {
   }
 }
 
-BGCommand& BGCommand::operator [](const BGString& _n)                     { return *command(_n, true); }
-const BGCommand& BGCommand::operator[](const BGString& _n) const          { return *find(_n); }
-bool BGCommand::hasCommand(const BGString& name) const                    { return find(name) != cend(); }
-bool BGCommand::hasCommand(const BGCommand& rs) const                     { return find(rs) != cend(); }
-BGCommand::iterator BGCommand::find(const BGCommand& cmd)                 { return std::find(begin(), end(), cmd); }
-BGCommand::const_iterator BGCommand::find(const BGCommand& cmd) const     { return std::find(cbegin(), cend(), cmd); }
-BGCommand::iterator BGCommand::find(const BGString& name)                 { BGCommand cmd = namedWrapper(name); return find(cmd); }
-BGCommand::const_iterator BGCommand::find(const BGString& name) const     { BGCommand cmd = namedWrapper(name); return find(cmd); }
+Command& Command::operator [](const StringRef& _n)                     { return *command(_n, true); }
+const Command& Command::operator[](const StringRef& _n) const          { return *find(_n); }
+bool Command::hasCommand(const StringRef& name) const                  { return find(name) != cend(); }
+bool Command::hasCommand(const Command& rs) const                   { return find(rs) != cend(); }
+Command::iterator Command::find(const Command& cmd)                 { return std::find(begin(), end(), cmd); }
+Command::const_iterator Command::find(const Command& cmd) const     { return std::find(cbegin(), cend(), cmd); }
+Command::iterator Command::find(const StringRef& name)                 { Command cmd = namedWrapper(name); return find(cmd); }
+Command::const_iterator Command::find(const StringRef& name) const     { Command cmd = namedWrapper(name); return find(cmd); }
 
-BGCommand::iterator BGCommand::search(const BGString& name) {
+Command::iterator Command::search(const StringRef& name) {
   iterator i = find(name);
   if (i != end()) return i;
   for (iterator j = begin(); j != end(); j++) {
@@ -226,7 +227,7 @@ BGCommand::iterator BGCommand::search(const BGString& name) {
   return i;
 }
 
-BGCommand::const_iterator BGCommand::search(const BGString& name) const {
+Command::const_iterator Command::search(const StringRef& name) const {
   const_iterator i = find(name);
   if (i != cend()) return i;
   for (const_iterator j = cbegin(); j != cend(); j++) {
@@ -236,10 +237,10 @@ BGCommand::const_iterator BGCommand::search(const BGString& name) const {
   return i;
 }
 
-BGCommand::search_depth BGCommand::search(const BGString& name, NSInteger maxDepth, NSInteger& current) { BGCommand cmd = namedWrapper(name); return search(cmd, maxDepth, current); }
-BGCommand::const_search_depth BGCommand::search(const BGString& name, NSInteger maxDepth, NSInteger& current) const { BGCommand cmd = namedWrapper(name); return search(cmd, maxDepth, current); }
+Command::search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) { Command cmd = namedWrapper(name); return search(cmd, maxDepth, current); }
+Command::const_search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const { Command cmd = namedWrapper(name); return search(cmd, maxDepth, current); }
 
-BGCommand::search_depth BGCommand::search(const BGCommand& cmd, NSInteger maxDepth, NSInteger& current) {
+Command::search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) {
   if (current < 0) current = 0;
   if (maxDepth > 0 && current > maxDepth) return {end(),current};
 
@@ -260,7 +261,7 @@ BGCommand::search_depth BGCommand::search(const BGCommand& cmd, NSInteger maxDep
   return {end(),current};
 }
 
-BGCommand::const_search_depth BGCommand::search(const BGCommand& cmd, NSInteger maxDepth, NSInteger& current) const {
+Command::const_search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) const {
   if (current < 0) current = 0;
   if (maxDepth > 0 && current > maxDepth) return {cend(),current};
 
@@ -282,16 +283,16 @@ BGCommand::const_search_depth BGCommand::search(const BGCommand& cmd, NSInteger 
   return {cend(),current};
 }
 
-BGCommand::iterator BGCommand::command(const BGString& _n, bool addIfMissing) {
+Command::iterator Command::command(const StringRef& _n, bool addIfMissing) {
   if (!_n) return end();
   if (!hasCommand(_n) && addIfMissing) {
-    BGCommand cmd = BGCommand(_n);
+    Command cmd = Command(_n);
     addCommand(cmd);
   }
   return find(_n);
 }
 
-BGCommand::add_result BGCommand::addCommand(const BGCommand& c) {
+Command::add_result Command::addCommand(const Command& c) {
   if (!c.name) { printf("Invalid command param\n"); return {end(), false}; }
 
   bool added = false;
@@ -308,44 +309,61 @@ BGCommand::add_result BGCommand::addCommand(const BGCommand& c) {
   return {i,added};
 }
 
-BGCommand::iterator BGCommand::removeCommand(const BGCommand& _c)                               { return commands.erase(find(_c.name)); }
-BGCommand::iterator BGCommand::addCommands(BGCommandVector& _c)                                 { return commands.insert(cend(), _c.begin(), _c.end()); }
-BGCommand::size_type BGCommand::count() const                                                   { return commands.size(); }
+Command::add_result Command::addCommand(Command&& c) {
+  if (!c.name) { printf("Invalid command param\n"); return {end(), false}; }
 
-void BGCommand::setOptions(const BGOptionDefinitionVector& rs)                                  { for (auto const& opt:rs) addOption(opt); _needsOptionsReset = true; }
-void BGCommand::addOption(const GBOptionDefinition& rs)                                         { optionDefinitions.push_back(rs); _needsOptionsReset = true; }
-void BGCommand::removeOption(const GBOptionDefinition& rs)                                      { optionDefinitions.remove(rs); _needsOptionsReset = true; }
-void BGCommand::removeOption(BGOptionDefinitionVector::size_type __n)                           { optionDefinitions.remove(__n); _needsOptionsReset = true; }
-GBOptionDefinition& BGCommand::optionAt(BGOptionDefinitionVector::size_type __n)                { return optionDefinitions[__n]; }
-const GBOptionDefinition& BGCommand::optionAt(BGOptionDefinitionVector::size_type __n) const    { return optionDefinitions[__n]; }
+  bool added = false;
 
-void BGCommand::setSyntaxes(const BGStringVector& rs)                                           { for (auto const& opt:rs) addSyntax(opt); }
-void BGCommand::addSyntax(const BGString& rs)                                                   { syntax.push_back(rs); }
-void BGCommand::removeSyntax(const BGString& rs)                                                { syntax.erase(std::remove(syntax.begin(), syntax.end(), rs), syntax.end()); }
-void BGCommand::removeSyntax(BGStringVector::size_type __n)                                     { if (__n >= syntax.size()) return; removeSyntax(syntax.at(__n)); }
-BGString& BGCommand::syntaxAt(BGStringVector::size_type __n)                                    { return syntax[__n]; }
-const BGString& BGCommand::syntaxAt(BGStringVector::size_type __n) const                        { return syntax[__n]; }
+  iterator i = end();
+  if (!hasCommand(c)) {
+    i = commands.insert(cend(), std::move(c));
+    if (i != end()) {
+      i->setParent(*this);
+      added = true;
+    }
+  }
 
-BGString BGCommand::commandString() { return (_isAppCommand || (parent == nullptr)) ? name : parent->commandString() + " " + this->name; }
+  return {i,added};
+}
 
-void BGCommand::setName(const BGString& rs)                                                     { if (rs.valid()) name = rs; _initNameDeps(); }
-BGString BGCommand::getName() const                                                             { return name; }
-void BGCommand::setDescription(BGCommandStringBlock descriptionBlock)                           { if (descriptionBlock != NULL) description = descriptionBlock(*this); }
-BGString BGCommand::getDescription() const                                                      { return description; }
-void BGCommand::setRunBlock(BGCommandRunBlock __r) {
+Command::iterator Command::removeCommand(const Command& _c)                                 { return commands.erase(find(_c.name)); }
+Command::iterator Command::addCommands(CommandVector& _c)                                   { return commands.insert(cend(), _c.begin(), _c.end()); }
+Command::size_type Command::count() const                                                   { return commands.size(); }
+
+void Command::setOptions(const OptionDefinitionVector& rs)                                  { for (auto const& opt:rs) addOption(opt); _needsOptionsReset = true; }
+void Command::addOption(const GBOptionDefinition& rs)                                       { optionDefinitions.push_back(rs); _needsOptionsReset = true; }
+void Command::removeOption(const GBOptionDefinition& rs)                                    { optionDefinitions.remove(rs); _needsOptionsReset = true; }
+void Command::removeOption(OptionDefinitionVector::size_type __n)                           { optionDefinitions.remove(__n); _needsOptionsReset = true; }
+GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __n)                { return optionDefinitions[__n]; }
+const GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __n) const    { return optionDefinitions[__n]; }
+
+void Command::setSyntaxes(const StringVector& rs)                                           { for (auto const& opt:rs) addSyntax(opt); }
+void Command::addSyntax(const StringRef& rs)                                                   { syntax.push_back(rs); }
+void Command::removeSyntax(const StringRef& rs)                                                { syntax.erase(std::remove(syntax.begin(), syntax.end(), rs), syntax.end()); }
+void Command::removeSyntax(StringVector::size_type __n)                                     { if (__n >= syntax.size()) return; removeSyntax(syntax.at(__n)); }
+StringRef& Command::syntaxAt(StringVector::size_type __n)                                      { return syntax[__n]; }
+const StringRef& Command::syntaxAt(StringVector::size_type __n) const                          { return syntax[__n]; }
+
+StringRef Command::commandString() { return (_isAppCommand || (parent == nullptr)) ? name : parent->commandString() + " " + this->name; }
+
+void Command::setName(const StringRef& rs)                                                     { if (rs.valid()) name = rs; _initNameDeps(); }
+StringRef Command::getName() const                                                             { return name; }
+void Command::setDescription(CommandStringBlock descriptionBlock)                           { if (descriptionBlock != NULL) description = descriptionBlock(*this); }
+StringRef Command::getDescription() const                                                      { return description; }
+void Command::setRunBlock(CommandRunBlock __r) {
   runBlock = __r;
   if (runBlock != NULL) {
     setRunFunction(NULL);
   }
 }
-void BGCommand::setRunFunction(BGCommandRunFunction __r) {
+void Command::setRunFunction(CommandRunFunction __r) {
   runFunction = __r;
   if (runFunction != NULL) {
     setRunBlock(NULL);
   }
 }
 
-int BGCommand::run(BGStringVector& args) {
+int Command::run(StringVector& args) {
   if (settings.printHelp) {
     printHelp();
   }
@@ -359,7 +377,7 @@ int BGCommand::run(BGStringVector& args) {
   return -1;
 }
 
-void BGCommand::registerDefinitions() {
+void Command::registerDefinitions() {
   if (!_needsOptionsReset) return;
   _needsOptionsReset = false;
 
@@ -380,7 +398,7 @@ void BGCommand::registerDefinitions() {
   [optionsHelper registerOptionsToCommandLineParser:parser];
 }
 
-void BGCommand::setSettingsWithNameAndParent(const BGString& _n, GBSettings* _s) {
+void Command::setSettingsWithNameAndParent(const StringRef& _n, GBSettings* _s) {
   if (!settings) {
     settings = [GBSettings commandSettingsWithName:_n parent:_s];
   }
@@ -388,7 +406,7 @@ void BGCommand::setSettingsWithNameAndParent(const BGString& _n, GBSettings* _s)
   settings = [GBSettings commandSettingsWithName:_n parent:_s];
 }
 
-bool BGCommand::parse(BGStringVector& args) {
+bool Command::parse(StringVector& args) {
   __block bool valid = true;
   GBCommandLineParseBlock parseBlock = ^(GBParseFlags flags, NSString *option, id value, BOOL *stop) {
     switch (flags) {
@@ -408,17 +426,17 @@ bool BGCommand::parse(BGStringVector& args) {
   return valid && parse(args, parseBlock);
 }
 
-bool BGCommand::parse(BGStringVector& args, GBCommandLineParseBlock parse_block) {
+bool Command::parse(StringVector& args, GBCommandLineParseBlock parse_block) {
   registerDefinitions();
   return [parser parseOptionsWithArguments:[NSArray stringsFromStringVector:&args] commandLine:name block:parse_block];
 }
 
-BGCommand& BGCommand::parseCommand(BGStringVector& args) {
+Command& Command::parseCommand(StringVector& args) {
   if (args.empty()) {
     return *this;
   }
 
-  BGString cmdString = args.front();
+  StringRef cmdString = args.front();
 
   if (cmdString == "help" || cmdString == "-h" || cmdString == "--help") {
     args.erase(args.begin());
@@ -435,11 +453,11 @@ BGCommand& BGCommand::parseCommand(BGStringVector& args) {
   return cmd->parseCommand(args);
 }
 
-BGString BGCommand::helpString() {
+StringRef Command::helpString() {
   registerDefinitions();
 
   int spacing = 4;
-  BGString help;
+  StringRef help;
 
   help.setPostAppend(@"\n");
 
@@ -475,13 +493,13 @@ BGString BGCommand::helpString() {
     help += @"COMMANDS:";
 
     for (const_iterator i = cbegin(); i != cend(); i++) {
-      const BGCommand& command = *i;
+      const Command& command = *i;
       size_t length = command.name.size();
       longest = MAX(longest, length);
     }
 
     for (auto const& command:commands) {
-      BGString subcommand;
+      StringRef subcommand;
       subcommand.appendFormat(@"%*s%@", spacing, "", command.name.fString);
       size_t diff = longest - command.name.size() + spacing;
       subcommand.appendFormat(@"%*s", (int)diff, "");
@@ -502,27 +520,27 @@ BGString BGCommand::helpString() {
   return help;
 }
 
-void BGCommand::printHelp(int exitVal) {
-  BGString help = helpString();
+void Command::printHelp(int exitVal) {
+  StringRef help = helpString();
   help.print();
   exit(exitVal);
 }
 
-void BGCommand::printVersion(int exitVal) {
+void Command::printVersion(int exitVal) {
   if (!optionsHelper) printHelp(-1);
   [optionsHelper printVersion];
   exit(exitVal);
 }
 
-void BGCommand::printSettings(int exitVal) {
+void Command::printSettings(int exitVal) {
   if (!optionsHelper || !settings) printHelp(-1);
-  BGString values([optionsHelper valuesStringFromSettings:settings]);
+  StringRef values([optionsHelper valuesStringFromSettings:settings]);
   values.print();
   if (exitVal > INT32_MIN) exit(exitVal);
 }
 
 // TODO: clear()
-void BGCommand::clear() {
+void Command::clear() {
   if (nameWrapper) {
     name.zero();
     nameWrapper = 0;
@@ -546,8 +564,8 @@ void BGCommand::clear() {
   addHelpToken = 0;
 }
 
-BGString BGCommand::inspect(int leadingSpaces) const {
-  BGString info;
+StringRef Command::inspect(int leadingSpaces) const {
+  StringRef info;
   int gen = generationDepth();
   int prespace = leadingSpaces * (gen - 1);
 
@@ -577,3 +595,5 @@ BGString BGCommand::inspect(int leadingSpaces) const {
 
   return info;
 }
+
+BG_NAMESPACE_END
