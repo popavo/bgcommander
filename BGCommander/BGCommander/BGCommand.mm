@@ -8,11 +8,8 @@ BGCommand& BGCommand::sharedAppCommand() {
   static BGCommand _sharedAppCommand([[NSProcessInfo processInfo] processName]);
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    _sharedAppCommand.optionDefinitions = {
-      { 'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint },
-      { 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint }
-    };
-
+    _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
+    _sharedAppCommand.addOption({ 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint });
     _sharedAppCommand.setRunBlock(^int(std::vector<BGString> args, GBSettings *options, BGCommand &command) {
       return 0;
     });
@@ -62,12 +59,10 @@ void BGCommand::_commonInit(const BGString& _s, bool _nw) {
 }
 
 void BGCommand::_finishInit() {
-  if (!isAppCommand()) {
-    dispatch_once(&addHelpToken, ^{
-      addOption({0, nil, @"Global options", GBOptionSeparator});
-      addOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
-    });
-  }
+  dispatch_once(&addHelpToken, ^{
+    addOption({0, nil, @"Global options", GBOptionSeparator});
+    addOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
+  });
 }
 
 void BGCommand::_copyAssign(const BGCommand& rs) {
@@ -419,20 +414,13 @@ bool BGCommand::parse(BGStringVector& args, GBCommandLineParseBlock parse_block)
 }
 
 BGCommand& BGCommand::parseCommand(BGStringVector& args) {
-  if (_isAppCommand) {
-    // Add the help command at the very end so that it's the last in the command list...
-    dispatch_once(&addHelpToken, ^{
-      addCommand({"help", "Display global or [command] help documentation"});
-    });
-  }
-
   if (args.empty()) {
     return *this;
   }
 
   BGString cmdString = args.front();
 
-  if (cmdString == "help") {
+  if (cmdString == "help" || cmdString == "-h" || cmdString == "--help") {
     args.erase(args.begin());
     parseCommand(args).printHelp();
   }

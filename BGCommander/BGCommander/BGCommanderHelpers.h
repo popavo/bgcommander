@@ -52,12 +52,12 @@ inline void hash_range(std::size_t& seed, It first, It last) {
 }
 
 #define OBJC_STD_HASH(__type) \
-template <> \
-struct std::hash<__type> { \
-  std::size_t operator()(__type __v) { \
-    return [__v hash]; \
-  } \
-}
+  template <> \
+  struct std::hash<__type> { \
+    std::size_t operator()(__type __v) { \
+      return [__v hash]; \
+    } \
+  }
 
 OBJC_STD_HASH(GBOptionsHelper*);
 OBJC_STD_HASH(GBSettings*);
@@ -65,6 +65,14 @@ OBJC_STD_HASH(GBCommandLineParser*);
 OBJC_STD_HASH(NSString*);
 
 namespace std {
+  template<>
+  struct hash<id> {
+    size_t operator()(const id& __v) {
+      printf("Using id hasher\n");
+      return [__v hash];
+    }
+  };
+
   template<>
   struct hash<GBOptionDefinition> {
     size_t operator()(const GBOptionDefinition& __v) {

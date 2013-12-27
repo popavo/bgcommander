@@ -56,7 +56,7 @@ private:
 public:
   static BGCommand& sharedAppCommand();
   
-  BGCommand() : BGCommandIvars { _commonInit(name); }
+  BGCommand() : BGCommandIvars { _commonInit(name); _finishInit(); }
   BGCommand(BGCommand&& rs);
   BGCommand(const BGCommand& rs);
   BGCommand(const BGString& _s, const BGString& _d="", const BGOptionDefinitionVector& _o={});
