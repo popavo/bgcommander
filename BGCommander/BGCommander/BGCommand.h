@@ -14,8 +14,8 @@
 class BGCommand {
 public:
   typedef std::vector<BGCommand> BGCommandVector;
-  typedef int (^ BGCommandRunBlock)(BGStringVector args, GBSettings* options, BGCommand& command);
-  typedef int (* BGCommandRunFunction)(BGStringVector args, GBSettings* options, BGCommand& command);
+  typedef int (^ BGCommandRunBlock)(BGStringVector args, GBSettings* settings, BGCommand& command);
+  typedef int (* BGCommandRunFunction)(BGStringVector args, GBSettings* settings, BGCommand& command);
   typedef BGString& (^ BGCommandStringBlock)(const BGCommand& command);
   typedef typename BGCommandVector::iterator iterator;
   typedef typename BGCommandVector::const_iterator const_iterator;
