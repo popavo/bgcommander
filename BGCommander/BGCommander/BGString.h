@@ -56,7 +56,7 @@ public:
   EQ_OPERATOR(const BGString&, [fString isEqualToString:rs.fString])
   EQ_OPERATOR(NSString*, [fString isEqualToString:rs])
   EQ_OPERATOR(const_char, [fString isEqualToString:@(rs)])
-  bool operator !() const { return fString == nil || fString == Nil || fString.length == 0; }
+  bool operator !() const { return fString == nil || fString == Nil || fString == NULL || fString.length == 0; }
   bool valid() const { return !!*this; }
 
   BGString& assign(NSString* rs);
