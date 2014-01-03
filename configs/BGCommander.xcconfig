@@ -5,7 +5,10 @@
 PRODUCT_NAME = BGCommander
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) PROJECT=BGCommander $(COMMON_GCC_PREPROCESSOR_DEFINITIONS)
 
-OTHER_LDFLAGS = -undefined dynamic_lookup -headerpad_max_install_names -sectcreate __TEXT __info_plist $(INFOPLIST_FILE)
+OTHER_LDFLAGS = -undefined dynamic_lookup -headerpad_max_install_names
 
 INFOPLIST_FILE = BGCommander/Info.plist
 GCC_PREFIX_HEADER = BGCommander/BGCommander-Prefix.pch
+
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)

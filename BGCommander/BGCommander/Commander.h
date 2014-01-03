@@ -1,7 +1,7 @@
 #ifndef __BG_COMMANDER_H__
 #define __BG_COMMANDER_H__
 
-#import "BGCommander.h"
+#import <BGCommander.h>
 
 BG_NAMESPACE
 

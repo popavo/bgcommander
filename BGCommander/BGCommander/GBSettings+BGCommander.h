@@ -1,4 +1,4 @@
-#import "GBSettings.h"
+#import <GBSettings.h>
 
 @interface GBSettings (BGCommander)
 

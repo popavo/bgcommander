@@ -1,11 +1,7 @@
 #ifndef __BG_COMMAND_H__
 #define __BG_COMMAND_H__
 
-#import "BGCommander.h"
-
-@class GBOptionsHelper;
-@class GBSettings;
-@class GBCommandLineParser;
+#import <BGCommander.h>
 
 #define CommandIvars \
   name(), description(), tag(), commands(), syntax(), optionDefinitions(), globalOptionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), runBlock(NULL), runFunction(NULL), \

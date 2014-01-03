@@ -3,16 +3,6 @@
 
 BG_NAMESPACE
 
-template<typename _Tp>
-_Tp ValidString(_Tp __s);
-
-template<> FORCE_INLINE NSString* ValidString<NSString*>(NSString* __s)                                { return (!__s) ? @"" : __s; }
-template<> FORCE_INLINE const char* ValidString<const char*>(const char* __s)                          { return (__s == NULL) ? "" : __s; }
-template<> FORCE_INLINE const std::string& ValidString<const std::string&>(const std::string& __s)     { return (__s.c_str() != NULL) ? __s : *(new std::string()); }
-template<> FORCE_INLINE const StringRef& ValidString<const StringRef&>(const StringRef& __s)              { return (!__s.fString) ? *(new StringRef()) : __s; }
-
-#define VALID_STR(arg) ValidString<__typeof__(arg)>(arg)
-
 const StringRef& Newline = @"\n";
 
 int StringRef::compare(const StringRef& rs) const {
@@ -56,15 +46,15 @@ StringRef::const_char StringRef::c_str() const              { return fString.UTF
 size_t StringRef::size() const                             { return (fString) ? fString.length : 0; }
 size_t StringRef::hash() const                             { return fString.hash; }
 
-StringRef& StringRef::assign(NSString* rs)                  { fString = VALID_STR(rs); return *this; }
-StringRef& StringRef::assign(const_char rs)                 { fString = @(VALID_STR(rs)); return *this; }
+StringRef& StringRef::assign(NSString* rs)                  { fString = rs; return *this; }
+StringRef& StringRef::assign(const_char rs)                 { fString = @(rs); return *this; }
 
 StringRef& StringRef::append(NSString* rs)                  { return append(preAppend, rs, postAppend); }
-StringRef& StringRef::append(const_char rs)                 { return append(@(VALID_STR(rs))); }
+StringRef& StringRef::append(const_char rs)                 { return append(@(rs)); }
 StringRef& StringRef::append(const StringRef& rs)            { return append(rs.fString); }
-StringRef& StringRef::appendString(NSString* rs)            { fString = [fString stringByAppendingString:VALID_STR(rs)]; return *this; }
-StringRef& StringRef::appendString(const_char rs)           { return appendString(@(VALID_STR(rs))); }
-StringRef& StringRef::appendString(const StringRef& rs)      { return appendString(VALID_STR(rs.fString)); }
+StringRef& StringRef::appendString(NSString* rs)            { fString = [fString stringByAppendingString:rs]; return *this; }
+StringRef& StringRef::appendString(const_char rs)           { return appendString(@(rs)); }
+StringRef& StringRef::appendString(const StringRef& rs)      { return appendString(rs.fString); }
 
 StringRef& StringRef::_assignMove(StringRef& rs) {
   fString = std::move(rs.fString);
@@ -88,41 +78,41 @@ StringRef& StringRef::assign(const StringRef& rs) {
 StringRef& StringRef::appendFormat(const_char format, ...) {
   VA_STR(format, @(format), str)
 
-  return append(VALID_STR(preAppend), VALID_STR(str), VALID_STR(postAppend));
+  return append(preAppend, str, postAppend);
 }
 
 StringRef& StringRef::appendFormat(const_char pre, const_char post, const_char format, ...) {
   VA_STR(format, @(format), str)
 
-  return append(@(VALID_STR(pre)), VALID_STR(str), @(VALID_STR(post)));
+  return append(@(pre), str, @(post));
 }
 
 StringRef& StringRef::appendFormat(NSString* format, ...) {
   VA_STR(format, format, str)
 
-  return append(VALID_STR(preAppend), VALID_STR(str), VALID_STR(postAppend));
+  return append(preAppend, str, postAppend);
 }
 
 StringRef& StringRef::append(NSString* pre, NSString* str, NSString* post) {
-  fString = [fString stringByAppendingFormat:@"%@%@%@", VALID_STR(pre), VALID_STR(str), VALID_STR(post)];
+  fString = [fString stringByAppendingFormat:@"%@%@%@", pre, str, post];
   return *this;
 }
 
 StringRef& StringRef::appendFormat(NSString* pre, NSString* post, NSString* format, ...) {
   VA_STR(format, format, str);
-  return append(VALID_STR(pre), VALID_STR(str), VALID_STR(post));
+  return append(pre, str, post);
 }
 
 StringRef& StringRef::appendFormatOnly(const_char format, ...) {
   VA_STR(format, @(format), str)
 
-  fString = [fString stringByAppendingString:VALID_STR(str)];
+  fString = [fString stringByAppendingString:str];
   return *this;
 }
 
 StringRef& StringRef::appendFormatOnly(NSString* format, ...) {
   VA_STR(format, format, str)
-  fString = [fString stringByAppendingString:VALID_STR(str)];
+  fString = [fString stringByAppendingString:str];
   return *this;
 }
 

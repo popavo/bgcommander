@@ -1,5 +1,10 @@
-#import "BGCommander.h"
+#import <BGCommander.h>
 #import <sysexits.h>
+
+typedef NS_ENUM(int, CommanderExits) {
+  NO_EXIT = INT32_MIN,
+
+};
 
 #define VA_STR(__format, __formatArg, __name) \
   va_list __ap; \

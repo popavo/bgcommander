@@ -8,8 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-#if defined(__cplusplus)
-#import "BGCommander.h"
+#if __cplusplus
+#import <BGCommander.h>
 #endif
 
 #endif
