@@ -17,6 +17,15 @@ public:
   iterator remove(const_reference rs)     { return erase(std::remove(begin(), end(), rs), end()); }
   iterator remove(size_type rs)           { if (rs >= size()) return end(); return remove(at(rs)); }
 
+  reference find(char _so=0, NSString* _lo=nil) {
+    for (auto & optionDef:*this) {
+      if ((optionDef.shortOption == _so) && [optionDef.longOption isEqualToString:_lo]) {
+        return optionDef;
+      }
+    }
+    return *end();
+  }
+
   StringRef helpString(int leadingWhiteSpace = 4) {
     StringRef help;
     if (size()) {
