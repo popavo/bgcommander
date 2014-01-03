@@ -9,7 +9,7 @@
 #import <AppKit/AppKit.h>
 
 #if __cplusplus
-#import <BGCommander.h>
+#import "BGCommander.h"
 #endif
 
 #endif

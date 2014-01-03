@@ -1,5 +1,0 @@
-// BGCommander build settings
-
-#include "BGCommander.xcconfig"
-
-PRODUCT_NAME = bgcommander

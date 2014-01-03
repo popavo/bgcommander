@@ -11,7 +11,7 @@ Command& Command::sharedAppCommand() {
   dispatch_once(&onceToken, ^{
     _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
     _sharedAppCommand.addGlobalOption({ 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint });
-    _sharedAppCommand.setRunBlock(^int(std::vector<StringRef> args, GBSettings *options, Command &command) {
+    _sharedAppCommand.setRunBlock(^int(StringVector args, GBSettings *options, Command &command) {
       return 0;
     });
   });

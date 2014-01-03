@@ -1,20 +1,13 @@
 #import "GBOptionsHelper+BGCommander.h"
 
-@interface OptionDefinition : NSObject
-@property (nonatomic, assign) char shortOption;
-@property (nonatomic, copy) NSString *longOption;
-@property (nonatomic, copy) NSString *description;
-@property (nonatomic, assign) GBOptionFlags flags;
-@end
-
 @interface GBOptionsHelper ()
 - (void)replacePlaceholdersAndPrintStringFromBlock:(GBOptionStringBlock)block;
-- (void)enumerateOptions:(void(^)(OptionDefinition *definition, BOOL *stop))handler;
-- (NSUInteger)requirements:(OptionDefinition *)definition;
-- (BOOL)isSeparator:(OptionDefinition *)definition;
-- (BOOL)isCmdLine:(OptionDefinition *)definition;
-- (BOOL)isPrint:(OptionDefinition *)definition;
-- (BOOL)isHelp:(OptionDefinition *)definition;
+- (void)enumerateOptions:(void(^)(GBOption *definition, BOOL *stop))handler;
+- (NSUInteger)requirements:(GBOption *)definition;
+- (BOOL)isSeparator:(GBOption *)definition;
+- (BOOL)isCmdLine:(GBOption *)definition;
+- (BOOL)isPrint:(GBOption *)definition;
+- (BOOL)isHelp:(GBOption *)definition;
 @property (nonatomic, readonly) NSString *applicationNameFromBlockOrDefault;
 @property (nonatomic, readonly) NSString *applicationVersionFromBlockOrNil;
 @property (nonatomic, readonly) NSString *applicationBuildFromBlockOrNil;
@@ -76,7 +69,7 @@
   __block NSUInteger maxNameTypeLength = 0;
 	__block NSUInteger lastSeparatorIndex = NSNotFound;
 	NSMutableArray *rows = [NSMutableArray array];
-	[self enumerateOptions:^(OptionDefinition *definition, BOOL *stop) {
+	[self enumerateOptions:^(GBOption *definition, BOOL *stop) {
 		if (![self isHelp:definition]) return;
 
 		// Prepare separator. Remove previous one if there were no values prepared for it.
@@ -184,7 +177,7 @@
 
 	// Append all rows for options.
 	__block NSUInteger lastSeparatorIndex = 0;
-	[self enumerateOptions:^(OptionDefinition *definition, BOOL *stop) {
+	[self enumerateOptions:^(GBOption *definition, BOOL *stop) {
 		if (![blockSelf isPrint:definition]) return;
 
 		// Add separator. Note that we don't care about its length, we'll simply draw it over the whole line if needed.

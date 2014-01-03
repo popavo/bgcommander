@@ -4,7 +4,7 @@
 #import <string>
 #import <iostream>
 #import <vector>
-#import <BGCommander.h>
+#import "BGCommander.h"
 
 BG_NAMESPACE
 
@@ -24,7 +24,7 @@ public:
   StringRef(const StringRef& rs) : fString(rs.fString), preAppend(@""), postAppend(@"") { }
   StringRef(NSString* rs) : fString(rs), preAppend(@""), postAppend(@"") { }
   StringRef(const_char rs) { preAppend = @""; postAppend = @""; assign(rs); }
-  StringRef(StringRef&& rs) : fString(std::move(rs.fString)), preAppend(std::move(rs.preAppend)), postAppend(std::move(rs.postAppend)) { rs.zero(); }
+  StringRef(StringRef&& rs) { _assignMove(rs); }
 
   void zero();
 
@@ -95,7 +95,13 @@ private:
   StringRef& _assignMove(StringRef& rs);
 };
 
-typedef std::vector<StringRef> StringVector;
+class StringVector : public std::vector<StringRef> {
+public:
+  StringVector() : std::vector<StringRef>() { }
+  StringVector(std::initializer_list<value_type> __il) : std::vector<StringRef>(__il) { }
+  void add(const_reference rs)            { push_back(rs); }
+  void add(value_type&& rs)               { push_back(std::move(rs)); }
+};
 
 inline std::ostream& operator <<(std::ostream& OS, const bg::StringRef& string) {
   OS << string.c_str();

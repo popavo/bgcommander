@@ -1,4 +1,4 @@
-#import <GBOptionsHelper.h>
+#import "GBOptionsHelper.h"
 
 @interface GBOptionsHelper (BGCommander)
 
