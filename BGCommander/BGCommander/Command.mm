@@ -203,7 +203,7 @@ void Command::resetParentRefs() {
 }
 
 int Command::generationDepth() const                                    { return (_isAppCommand || (parent == nullptr)) ? 0 : parent->generationDepth() + 1; }
-void Command::setParent(Command& p)                                     {  parent = &p; }
+void Command::setParent(Command& p)                                     { parent = &p; }
 bool Command::hasChildren() const                                       { return count() != 0; }
 
 Command::iterator Command::begin()                                      { return commands.begin(); }
