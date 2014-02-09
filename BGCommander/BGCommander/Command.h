@@ -140,6 +140,7 @@ public:
 
   void registerDefinitions();
   void setSettingsWithNameAndParent(const StringRef& _n, GBSettings* _s);
+  void setDefaultSettingsValue(const StringRef& _n, id _v);
 
   void        setName(const StringRef& rs);
   StringRef    getName() const;

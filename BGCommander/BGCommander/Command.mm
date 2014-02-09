@@ -415,6 +415,11 @@ void Command::setSettingsWithNameAndParent(const StringRef& _n, GBSettings* _s) 
   settings = [GBSettings commandSettingsWithName:_n parent:_s];
 }
 
+void Command::setDefaultSettingsValue(const StringRef& _n, id _v) {
+  if (!settings) settings = [GBSettings commandSettingsWithName:name parent:nil];
+  [settings setObject:_v forKey:_n];
+}
+
 bool Command::parse(StringVector& args) {
   __block bool valid = true;
   GBCommandLineParseBlock parseBlock = ^(GBParseFlags flags, NSString *option, id value, BOOL *stop) {
