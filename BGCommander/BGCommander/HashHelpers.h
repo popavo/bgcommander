@@ -42,7 +42,6 @@ namespace std {
   template<>
   struct hash<id> {
     size_t operator()(const id& __v) {
-      printf("Using id hasher\n");
       return [__v hash];
     }
   };
