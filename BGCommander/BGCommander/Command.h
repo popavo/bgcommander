@@ -51,8 +51,7 @@ protected:
   dispatch_once_t addHelpToken;
 
 private:
-  Command(const std::string& n) { _commonInit(n.c_str(), true); }
-  static Command namedWrapper(const StringRef& n) { return Command(std::string(n.c_str())); }
+  Command(const std::string& n) : name(n.c_str()), nameWrapper(true) { }
 
 public:
   static Command& sharedAppCommand();
@@ -66,8 +65,6 @@ public:
   Command(Command&& rs);
   Command(const Command& rs);
   Command(const StringRef& _s, const StringRef& _d="", const OptionDefinitionVector& _o={});
-  Command(const_char _s, const StringRef& _d="", const OptionDefinitionVector& _o={});
-  Command(NSString* _s, const StringRef& _d="", const OptionDefinitionVector& _o={});
 
   Command& operator =(const Command& rs);
   Command& operator =(Command&& rs);
@@ -193,7 +190,7 @@ public:
 private:
   void _initIvars();
   void _initNameDeps();
-  void _commonInit(const StringRef& _s, bool _nw = false);
+  void _commonInit(const StringRef& _s);
   void _finishInit();
   void clear();
 

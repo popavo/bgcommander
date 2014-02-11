@@ -81,12 +81,6 @@ StringRef& StringRef::appendFormat(const_char format, ...) {
   return append(preAppend, str, postAppend);
 }
 
-StringRef& StringRef::appendFormat(const_char pre, const_char post, const_char format, ...) {
-  VA_STR(format, @(format), str)
-
-  return append(@(pre), str, @(post));
-}
-
 StringRef& StringRef::appendFormat(NSString* format, ...) {
   VA_STR(format, format, str)
 
@@ -96,11 +90,6 @@ StringRef& StringRef::appendFormat(NSString* format, ...) {
 StringRef& StringRef::append(NSString* pre, NSString* str, NSString* post) {
   fString = [fString stringByAppendingFormat:@"%@%@%@", pre, str, post];
   return *this;
-}
-
-StringRef& StringRef::appendFormat(NSString* pre, NSString* post, NSString* format, ...) {
-  VA_STR(format, format, str);
-  return append(pre, str, post);
 }
 
 StringRef& StringRef::appendFormatOnly(const_char format, ...) {

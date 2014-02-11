@@ -62,6 +62,9 @@ public:
   bool operator !() const { return fString == nil || fString == Nil || fString == NULL || fString.length == 0; }
   bool valid() const { return !!*this; }
 
+  bool contains(const StringRef& rs) { return [fString rangeOfString:rs options:NSLiteralSearch].length > 0; }
+  bool containsLike(const StringRef& rs) { return [fString rangeOfString:rs options:NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch|NSWidthInsensitiveSearch].length > 0; }
+
   StringRef& assign(NSString* rs);
   StringRef& assign(const_char rs);
   StringRef& assign(const StringRef& rs);
@@ -77,8 +80,6 @@ public:
   StringRef& appendFormat(NSString* format, ...) NS_FORMAT_FUNCTION(2, 3);
 
   StringRef& append(NSString* pre, NSString* str, NSString* post);
-  StringRef& appendFormat(NSString* pre, NSString* post, NSString* format, ...) NS_FORMAT_FUNCTION(4,5);
-  StringRef& appendFormat(const_char pre, const_char post, const_char format, ...) CHAR_FORMAT_FUNCTION(4,5);
 
   StringRef& appendFormatOnly(const_char format, ...) CHAR_FORMAT_FUNCTION(2,3);
   StringRef& appendFormatOnly(NSString* format, ...) NS_FORMAT_FUNCTION(2, 3);
@@ -101,6 +102,8 @@ public:
   StringVector(std::initializer_list<value_type> __il) : std::vector<StringRef>(__il) { }
   void add(const_reference rs)            { push_back(rs); }
   void add(value_type&& rs)               { push_back(std::move(rs)); }
+
+  StringVector& from(size_type _n)        { if (_n < size()) { erase(begin(), std::find(begin(), end(), at(_n))); } return *this; }
 };
 
 inline std::ostream& operator <<(std::ostream& OS, const bg::StringRef& string) {

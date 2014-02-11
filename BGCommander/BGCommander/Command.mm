@@ -15,7 +15,8 @@ Command& Command::sharedAppCommand() {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
-    _sharedAppCommand.addGlobalOption({ 'v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint });
+    _sharedAppCommand.addGlobalOption('v', @"version", @"Display version information", GBValueNone|GBOptionNoPrint );
+    _sharedAppCommand.addGlobalOption('h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint);
     _sharedAppCommand.setRunBlock(^int(StringVector args, GBSettings *options, Command &command) {
       return 0;
     });
@@ -25,7 +26,6 @@ Command& Command::sharedAppCommand() {
 
 void Command::_initIvars() {
   name = @"";
-  if (nameWrapper) return;
   description = @"";
   syntax = {};
   tag = 0;
@@ -52,11 +52,10 @@ void Command::_initNameDeps() {
   }
 }
 
-void Command::_commonInit(const StringRef& _s, bool _nw) {
-  nameWrapper = _nw;
+void Command::_commonInit(const StringRef& _s) {
+  nameWrapper = false;
   _initIvars();
   name = _s;
-  if (nameWrapper) return;
   _initNameDeps();
   _identifier = arc4random_uniform(UINT_MAX);
   optionsHelper = [GBOptionsHelper new];
@@ -141,20 +140,6 @@ Command::Command(const StringRef& _s, const StringRef& _d, const OptionDefinitio
   _finishInit();
 }
 
-Command::Command(const_char _s, const StringRef& _d, const OptionDefinitionVector& _o) {
-  _commonInit(_s);
-  description = _d;
-  optionDefinitions = _o;
-  _finishInit();
-}
-
-Command::Command(NSString* _s, const StringRef& _d, const OptionDefinitionVector& _o) {
-  _commonInit(_s);
-  description = _d;
-  optionDefinitions = _o;
-  _finishInit();
-}
-
 Command& Command::operator=(const Command &rs) {
   _copyAssign(rs);
   _finishInit();
@@ -223,8 +208,8 @@ bool Command::hasCommand(const StringRef& name) const                   { return
 bool Command::hasCommand(const Command& rs) const                       { return find(rs) != cend(); }
 Command::iterator Command::find(const Command& cmd)                     { return std::find(begin(), end(), cmd); }
 Command::const_iterator Command::find(const Command& cmd) const         { return std::find(cbegin(), cend(), cmd); }
-Command::iterator Command::find(const StringRef& name)                  { Command cmd = namedWrapper(name); return find(cmd); }
-Command::const_iterator Command::find(const StringRef& name) const      { Command cmd = namedWrapper(name); return find(cmd); }
+Command::iterator Command::find(const StringRef& name)                  { Command cmd(std::string(name.c_str())); return find(cmd); }
+Command::const_iterator Command::find(const StringRef& name) const      { Command cmd(std::string(name.c_str())); return find(cmd); }
 
 Command::iterator Command::search(const StringRef& name) {
   iterator i = find(name);
@@ -246,8 +231,8 @@ Command::const_iterator Command::search(const StringRef& name) const {
   return i;
 }
 
-Command::search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) { Command cmd = namedWrapper(name); return search(cmd, maxDepth, current); }
-Command::const_search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const { Command cmd = namedWrapper(name); return search(cmd, maxDepth, current); }
+Command::search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) { Command cmd(std::string(name.c_str())); return search(cmd, maxDepth, current); }
+Command::const_search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const { Command cmd(std::string(name.c_str())); return search(cmd, maxDepth, current); }
 
 Command::search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) {
   if (current < 0) current = 0;
@@ -295,7 +280,7 @@ Command::const_search_depth Command::search(const Command& cmd, NSInteger maxDep
 Command::iterator Command::command(const StringRef& _n, bool addIfMissing) {
   if (!_n) return end();
   if (!hasCommand(_n) && addIfMissing) {
-    Command cmd = Command(_n);
+    Command cmd(_n);
     addCommand(cmd);
   }
   return find(_n);
