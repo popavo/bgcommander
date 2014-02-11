@@ -88,8 +88,8 @@ public:
   int compare(const StringRef& rs) const;
   bool is_equal(const StringRef& rs) const;
 
-  void print() const;
-  void print(const StringRef& prefix, const StringRef& suffix) const;
+  void print(std::ostream& OS = std::cout) const;
+  void print(const StringRef& prefix, const StringRef& suffix, std::ostream& OS = std::cout) const;
 
 private:
   StringRef& _assignMove(StringRef& rs);

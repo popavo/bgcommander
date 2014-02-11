@@ -121,9 +121,9 @@ StringRef& StringRef::addNewline() {
   return *this;
 }
 
-bool StringRef::is_equal(const StringRef& rs) const                             { return [fString isEqualToString:rs.fString]; }
-void StringRef::print() const                                                  { std::cout << *this; }
-void StringRef::print(const StringRef& prefix, const StringRef& suffix) const    { std::cout << prefix << *this << suffix; }
+bool StringRef::is_equal(const StringRef& rs) const                                                 { return [fString isEqualToString:rs.fString]; }
+void StringRef::print(std::ostream& OS) const                                                        { OS << *this; }
+void StringRef::print(const StringRef& prefix, const StringRef& suffix, std::ostream& OS) const      { OS << prefix << *this << suffix; }
 
 BG_NAMESPACE_END
 
