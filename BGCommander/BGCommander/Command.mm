@@ -65,12 +65,7 @@ void Command::_commonInit(const StringRef& _s) {
   optionsHelper.applicationBuild = ^{ return BUILD; };
 }
 
-void Command::_finishInit() {
-  dispatch_once(&addHelpToken, ^{
-    addGlobalOption({0, nil, @"Global options", GBOptionSeparator});
-    addGlobalOption({'h', @"help", @"Display help documentation", GBValueNone|GBOptionNoPrint});
-  });
-}
+void Command::_finishInit() { }
 
 void Command::_copyAssign(const Command& rs) {
   if (rs.nameWrapper) {
@@ -385,19 +380,31 @@ void Command::registerDefinitions() {
   _needsOptionsReset = false;
 
   if (!settings) settings = [GBSettings commandSettingsWithName:name parent:nil];
-
-  optionsHelper = [GBOptionsHelper new];
-  parser = [GBCommandLineParser new];
+  if (!optionsHelper) optionsHelper = [GBOptionsHelper new];
+  if (!parser) parser = [GBCommandLineParser new];
 
   for (auto const& def:optionDefinitions) {
     [optionsHelper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
   }
 
-  for (auto const& def:globalOptionDefinitions) {
-    [optionsHelper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
-  }
+  registerGlobalDefinitions(optionsHelper);
 
   [optionsHelper registerOptionsToCommandLineParser:parser];
+}
+
+void Command::registerGlobalDefinitions(GBOptionsHelper* helper) {
+  if ([optionsHelper isEqual:helper]) {
+    // {0, nil, @"Global options", GBOptionSeparator}
+    [helper registerOption:0 long:nil description:@"Global options" flags:GBOptionSeparator];
+  }
+
+  for (auto const& def:globalOptionDefinitions) {
+    [helper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
+  }
+
+  if (!(_isAppCommand || (parent == nullptr))) {
+    parent->registerGlobalDefinitions(helper);
+  }
 }
 
 void Command::setSettingsParent(GBSettings* __p) {
@@ -515,13 +522,11 @@ StringRef Command::helpString() {
   }
 
   // List of options
-  if (optionDefinitions.size() || globalOptionDefinitions.size()) {
+  NSString* optionsHelp = [optionsHelper helpStringWithLeadingSpaces:spacing];
+  if (optionsHelp && optionsHelp.length > 0) {
     help.addNewline();
     help += @"OPTIONS:";
-    StringRef options = optionDefinitions.helpString(spacing);
-    if (options.size()) options.addNewline();
-    options += globalOptionDefinitions.helpString(spacing);
-    help += options;
+    help += optionsHelp;
   }
 
   // Footer
@@ -536,7 +541,7 @@ void Command::printHelp(int exitVal) {
 }
 
 void Command::printVersion(int exitVal) {
-  if (!optionsHelper) printHelp(-1);
+  if (!optionsHelper) printHelp(0);
   [optionsHelper printVersion];
   exit(exitVal);
 }

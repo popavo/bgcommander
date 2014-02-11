@@ -161,6 +161,7 @@ public:
   StringRef commandString();
 
   void registerDefinitions();
+  void registerGlobalDefinitions(GBOptionsHelper* helper);
   void setSettingsParent(GBSettings* __p);
   void setDefaultSettingsValueForKey(const StringRef& _n, id _v);
   void registerArrayForKey(const StringRef& _n);
