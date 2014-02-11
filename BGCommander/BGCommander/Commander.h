@@ -19,8 +19,7 @@ public:
   typedef typename Command::const_search_depth const_search_depth;
 
 private:
-  int runResult;
-  Commander();
+  Commander() { }
 
 public:
   static Commander& sharedCommander();
@@ -58,7 +57,7 @@ public:
 
   void resetAllParentRefs();
 
-  int run();
+  int run(StringVector& args = [[[NSProcessInfo processInfo] arguments] stringVector].from(0));
 };
 
 class CommanderAutoRunner {

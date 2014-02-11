@@ -16,10 +16,6 @@ Commander& Commander::sharedCommander() {
   return _sharedCommander;
 }
 
-Commander::Commander() {
-  runResult = INT32_MIN;
-}
-
 CommandVector& Commander::commands()                                      { return Command::AppCommand.commands; }
 Command& Commander::operator [](const StringRef& _n)                         { return Command::AppCommand[_n]; }
 const Command& Commander::operator [](const StringRef& _n) const             { return Command::AppCommand[_n]; }
@@ -69,16 +65,13 @@ void Commander::resetAllParentRefs() {
   Command::AppCommand.resetParentRefs();
 }
 
-int Commander::run() {
-  if (runResult > INT32_MIN) return runResult;
-  StringVector args = [[[NSProcessInfo processInfo] arguments] stringVector];
-  args.erase(args.begin());
-  Command cmd = Command::AppCommand.parseCommand(args);
+int Commander::run(StringVector& args) {
+  Command& cmd = Command::AppCommand.parseCommand(args);
   if (!cmd.parse(args)) {
     cmd.printHelp(1);
   }
   args = cmd.settings.arguments.stringVector;
-  runResult = cmd.run(args);
+  int runResult = cmd.run(args);
   return runResult;
 }
 
