@@ -41,6 +41,11 @@ public:
   Command&              command(const StringRef& _n, bool addIfMissing=true);
   Command&              addCommand(const Command& __c);
   add_result            addCommand(const Command& command, const Command& parent);
+
+#if CMD_USE_VARIADICS
+  template <class... _Args>
+  Command& addCommand(_Args&&... __args);
+#endif
   
   iterator              removeCommand(const Command& _c);
 
@@ -63,6 +68,15 @@ public:
   CommanderAutoRunner(Commander& _c = Commander::sharedCommander(), bool _e = true) : _commander(_c), _exit(_e) { }
   ~CommanderAutoRunner() { int status = _commander.run(); if (_exit) exit(status); }
 };
+
+#if CMD_USE_VARIADICS
+
+template<class... _Args>
+Command& Commander::addCommand(_Args&&... __args) {
+  return *(Command::AppCommand.commands.emplace(Command::AppCommand.cend(), std::forward<_Args>(__args)...));
+}
+
+#endif
 
 BG_NAMESPACE_END
 

@@ -2,6 +2,7 @@
 #define __BG_COMMAND_H__
 
 #import "BGCommander.h"
+#import <type_traits>
 
 #define CommandIvars \
   name(), description(), tag(), commands(), syntax(), optionDefinitions(), globalOptionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), runBlock(NULL), runFunction(NULL), \
@@ -55,7 +56,12 @@ private:
 
 public:
   static Command& sharedAppCommand();
-  
+
+#if CMD_USE_VARIADICS
+  template <class... _Args>
+  static Command& command(_Args&&... __args);
+#endif
+
   Command() : CommandIvars { _commonInit(name); _finishInit(); }
   Command(Command&& rs);
   Command(const Command& rs);
@@ -108,6 +114,11 @@ public:
   add_result            addCommand(const Command& __c);
   add_result            addCommand(Command&& _c);
 
+#if CMD_USE_VARIADICS
+  template <class... _Args>
+  add_result addCommand(_Args&&... __args);
+#endif
+
   iterator              removeCommand(const Command& _c);
   iterator              addCommands(CommandVector& _c);
 
@@ -117,6 +128,13 @@ public:
 
   void setOptions(const OptionDefinitionVector& rs);
   void addOption(const GBOptionDefinition& rs);
+  void addOption(GBOptionDefinition&& rs);
+
+#if CMD_USE_VARIADICS
+  template <class... _Args>
+  void addOption(_Args&&... __args);
+#endif
+
   void removeOption(const GBOptionDefinition& rs);
   void removeOption(OptionDefinitionVector::size_type __n);
   GBOptionDefinition& optionAt(OptionDefinitionVector::size_type __n);
@@ -124,6 +142,13 @@ public:
 
   void setGlobalOptions(const OptionDefinitionVector& rs);
   void addGlobalOption(const GBOptionDefinition& rs);
+  void addGlobalOption(GBOptionDefinition&& rs);
+
+#if CMD_USE_VARIADICS
+  template <class... _Args>
+  void addGlobalOption(_Args&&... __args);
+#endif
+
   void removeGlobalOption(const GBOptionDefinition& rs);
   void removeGlobalOption(OptionDefinitionVector::size_type __n);
   GBOptionDefinition& globalOptionAt(OptionDefinitionVector::size_type __n);
@@ -139,8 +164,9 @@ public:
   StringRef commandString();
 
   void registerDefinitions();
-  void setSettingsWithNameAndParent(const StringRef& _n, GBSettings* _s);
-  void setDefaultSettingsValue(const StringRef& _n, id _v);
+  void setSettingsParent(GBSettings* __p);
+  void setDefaultSettingsValueForKey(const StringRef& _n, id _v);
+  void registerArrayForKey(const StringRef& _n);
 
   void        setName(const StringRef& rs);
   StringRef    getName() const;
@@ -178,6 +204,33 @@ private:
 };
 
 typedef Command::CommandVector CommandVector;
+
+#if CMD_USE_VARIADICS
+
+template<class... _Args>
+Command& Command::command(_Args&&... __args) {
+  return *(AppCommand.commands.emplace(AppCommand.cend(), std::forward<_Args>(__args)...));
+}
+
+template<class... _Args>
+Command::add_result Command::addCommand(_Args&&... __args) {
+  Command cmd(std::forward<_Args>(__args)...);
+  return addCommand(std::move(cmd));
+}
+
+template <class... _Args>
+void Command::addOption(_Args&&... __args) {
+  GBOptionDefinition definition(std::forward<_Args>(__args)...);
+  addOption(std::move(definition));
+}
+
+template <class... _Args>
+void Command::addGlobalOption(_Args&&... __args) {
+  GBOptionDefinition definition(std::forward<_Args>(__args)...);
+  addGlobalOption(std::move(definition));
+}
+
+#endif
 
 BG_NAMESPACE_END
 

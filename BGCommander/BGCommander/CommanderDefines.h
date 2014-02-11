@@ -73,4 +73,12 @@
 # endif
 #endif
 
+#if !defined(CMD_USE_VARIADICS)
+# if (__cplusplus) && !defined(_LIBCPP_HAS_NO_VARIADICS)
+#  define CMD_USE_VARIADICS 1
+# else
+#  define CMD_USE_VARIADICS 0
+# endif
+#endif
+
 #endif

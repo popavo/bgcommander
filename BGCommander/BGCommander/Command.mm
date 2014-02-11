@@ -1,6 +1,11 @@
 #import "Command.h"
 #import <utility>
 
+@interface GBSettings (Private)
+@property (nonatomic, readwrite, copy) NSString *name;
+@property (nonatomic, readwrite, strong) GBSettings *parent;
+@end
+
 BG_NAMESPACE
 
 Command& Command::AppCommand = Command::sharedAppCommand();
@@ -42,7 +47,8 @@ void Command::_initIvars() {
 void Command::_initNameDeps() {
   if (name.valid()) {
     _isAppCommand = name.is_equal([[NSProcessInfo processInfo] processName]);
-    settings = [GBSettings commandSettingsWithName:name parent:nil];
+    if (!settings) settings = [GBSettings commandSettingsWithName:name parent:nil];
+    settings.name = name;
   }
 }
 
@@ -335,6 +341,7 @@ Command::size_type Command::count() const                                       
 
 void Command::setOptions(const OptionDefinitionVector& rs)                                        { optionDefinitions = rs; _needsOptionsReset = true; }
 void Command::addOption(const GBOptionDefinition& rs)                                             { optionDefinitions.push_back(rs); _needsOptionsReset = true; }
+void Command::addOption(GBOptionDefinition&& rs)                                                  { optionDefinitions.push_back(std::move(rs)); _needsOptionsReset = true; }
 void Command::removeOption(const GBOptionDefinition& rs)                                          { optionDefinitions.remove(rs); _needsOptionsReset = true; }
 void Command::removeOption(OptionDefinitionVector::size_type __n)                                 { optionDefinitions.remove(__n); _needsOptionsReset = true; }
 GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __n)                      { return optionDefinitions[__n]; }
@@ -342,6 +349,7 @@ const GBOptionDefinition& Command::optionAt(OptionDefinitionVector::size_type __
 
 void Command::setGlobalOptions(const OptionDefinitionVector& rs)                                  { globalOptionDefinitions = rs; _needsOptionsReset = true; }
 void Command::addGlobalOption(const GBOptionDefinition& rs)                                       { globalOptionDefinitions.push_back(rs); _needsOptionsReset = true; }
+void Command::addGlobalOption(GBOptionDefinition&& rs)                                            { globalOptionDefinitions.push_back(std::move(rs)); _needsOptionsReset = true; }
 void Command::removeGlobalOption(const GBOptionDefinition& rs)                                    { globalOptionDefinitions.remove(rs); _needsOptionsReset = true; }
 void Command::removeGlobalOption(OptionDefinitionVector::size_type __n)                           { globalOptionDefinitions.remove(__n); _needsOptionsReset = true; }
 GBOptionDefinition& Command::globalOptionAt(OptionDefinitionVector::size_type __n)                { return globalOptionDefinitions[__n]; }
@@ -407,17 +415,16 @@ void Command::registerDefinitions() {
   [optionsHelper registerOptionsToCommandLineParser:parser];
 }
 
-void Command::setSettingsWithNameAndParent(const StringRef& _n, GBSettings* _s) {
-  if (!settings) {
-    settings = [GBSettings commandSettingsWithName:_n parent:_s];
-  }
-  if (!_n || _n.is_equal({_s.name})) return;
-  settings = [GBSettings commandSettingsWithName:_n parent:_s];
+void Command::setSettingsParent(GBSettings* __p) {
+  settings.parent = __p;
 }
 
-void Command::setDefaultSettingsValue(const StringRef& _n, id _v) {
-  if (!settings) settings = [GBSettings commandSettingsWithName:name parent:nil];
+void Command::setDefaultSettingsValueForKey(const StringRef& _n, id _v) {
   [settings setObject:_v forKey:_n];
+}
+
+void Command::registerArrayForKey(const StringRef& _n) {
+  [settings registerArrayForKey:_n];
 }
 
 bool Command::parse(StringVector& args) {
