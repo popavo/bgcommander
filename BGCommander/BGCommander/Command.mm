@@ -380,31 +380,38 @@ void Command::registerDefinitions() {
   _needsOptionsReset = false;
 
   if (!settings) settings = [GBSettings commandSettingsWithName:name parent:nil];
-  if (!optionsHelper) optionsHelper = [GBOptionsHelper new];
-  if (!parser) parser = [GBCommandLineParser new];
+  optionsHelper = [GBOptionsHelper new];
+  parser = [GBCommandLineParser new];
 
   for (auto const& def:optionDefinitions) {
     [optionsHelper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
   }
 
-  registerGlobalDefinitions(optionsHelper);
+
+
+  OptionDefinitionVector globalOpts = globalOptions();
+  if (globalOpts.size()) {
+    [optionsHelper registerOption:0 long:nil description:@"Global Options" flags:GBOptionSeparator];
+    for (auto const& gdef:globalOpts) {
+      [optionsHelper registerOption:gdef.shortOption long:gdef.longOption description:gdef.description flags:gdef.flags];
+    }
+  }
+
 
   [optionsHelper registerOptionsToCommandLineParser:parser];
 }
 
-void Command::registerGlobalDefinitions(GBOptionsHelper* helper) {
-  if ([optionsHelper isEqual:helper]) {
-    // {0, nil, @"Global options", GBOptionSeparator}
-    [helper registerOption:0 long:nil description:@"Global options" flags:GBOptionSeparator];
+OptionDefinitionVector Command::globalOptions() {
+  OptionDefinitionVector _opts;
+  if (!(_isAppCommand || (parent == nullptr))) {
+    _opts = parent->globalOptions();
   }
 
   for (auto const& def:globalOptionDefinitions) {
-    [helper registerOption:def.shortOption long:def.longOption description:def.description flags:def.flags];
+    _opts.push_back(def);
   }
 
-  if (!(_isAppCommand || (parent == nullptr))) {
-    parent->registerGlobalDefinitions(helper);
-  }
+  return _opts;
 }
 
 void Command::setSettingsParent(GBSettings* __p) {
