@@ -2,14 +2,14 @@
 
 @interface GBOptionsHelper (BGCommander)
 
--(void)registerOptionsFromDefinitions:(GBOptionDefinition *)definitions count:(NSUInteger)count;
+- (void)registerOptionsFromDefinitions:(GBOptionDefinition*)definitions count:(NSUInteger)count;
 
--(NSString*)helpString;
--(NSString*)helpStringWithLeadingSpaces:(int)spaces;
+- (NSString*)helpString;
+- (NSString*)helpStringWithLeadingSpaces:(int)spaces;
 
--(NSString*)versionString;
+- (NSString*)versionString;
 
--(NSString*)valuesStringFromSettings:(GBSettings*)settings;
--(NSString*)valuesStringFromSettings:(GBSettings*)settings includeArguments:(BOOL)includeArgs;
+- (NSString*)valuesStringFromSettings:(GBSettings*)settings;
+- (NSString*)valuesStringFromSettings:(GBSettings*)settings includeArguments:(BOOL)includeArgs;
 
 @end

@@ -4,18 +4,18 @@
 #import "BGCommander.h"
 #import <type_traits>
 
-#define CommandIvars \
-  name(), description(), tag(), commands(), syntax(), optionDefinitions(), globalOptionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), runBlock(NULL), runFunction(NULL), \
-  nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr), addHelpToken()
+#define CommandIvars                                                                                                                                  \
+  name(), description(), tag(), commands(), syntax(), optionDefinitions(), globalOptionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), \
+      runBlock(NULL), runFunction(NULL), nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr), addHelpToken()
 
 BG_NAMESPACE
 
 class Command {
-public:
+ public:
   typedef std::vector<Command> CommandVector;
-  typedef int (^ CommandRunBlock)(StringVector args, GBSettings* settings, Command& command);
-  typedef int (* CommandRunFunction)(StringVector args, GBSettings* settings, Command& command);
-  typedef StringRef& (^ CommandStringBlock)(const Command& command);
+  typedef int (^CommandRunBlock)(StringVector args, GBSettings* settings, Command& command);
+  typedef int (*CommandRunFunction)(StringVector args, GBSettings* settings, Command& command);
+  typedef StringRef& (^CommandStringBlock)(const Command& command);
   typedef typename CommandVector::iterator iterator;
   typedef typename CommandVector::const_iterator const_iterator;
   typedef typename CommandVector::size_type size_type;
@@ -42,7 +42,7 @@ public:
   CommandRunBlock runBlock;
   CommandRunFunction runFunction;
 
-protected:
+ protected:
   bool nameWrapper;
   bool _isAppCommand;
   NSUInteger _identifier;
@@ -50,10 +50,10 @@ protected:
   Command* parent;
   dispatch_once_t addHelpToken;
 
-private:
-  Command(const std::string& n) : name(n.c_str()), nameWrapper(true) { }
+ private:
+  Command(const std::string& n) : name(n.c_str()), nameWrapper(true) {}
 
-public:
+ public:
   static Command& sharedAppCommand();
 
 #if CMD_USE_VARIADICS
@@ -61,18 +61,21 @@ public:
   static Command& command(_Args&&... __args);
 #endif
 
-  Command() : CommandIvars { _commonInit(name); _finishInit(); }
+  Command() : CommandIvars {
+    _commonInit(name);
+    _finishInit();
+  }
   Command(Command&& rs);
   Command(const Command& rs);
-  Command(const StringRef& _s, const StringRef& _d="", const OptionDefinitionVector& _o={});
+  Command(const StringRef& _s, const StringRef& _d = "", const OptionDefinitionVector& _o = {});
 
-  Command& operator =(const Command& rs);
-  Command& operator =(Command&& rs);
+  Command& operator=(const Command& rs);
+  Command& operator=(Command&& rs);
 
   EQ_OPERATOR(const_char, name.is_equal(rs))
   EQ_OPERATOR(const StringRef&, name.is_equal(rs))
   EQ_OPERATOR(const Command&, is_equal(rs))
-  bool operator !() const;
+  bool operator!() const;
   bool valid() const;
   bool is_equal(const Command& rs) const;
 
@@ -89,35 +92,35 @@ public:
   const_iterator cbegin() const;
   const_iterator cend() const;
 
-  Command& operator [](const StringRef& _n);
+  Command& operator[](const StringRef& _n);
   const Command& operator[](const StringRef& _n) const;
 
-  bool                  hasCommand(const StringRef& name) const;
-  bool                  hasCommand(const Command& rs) const;
+  bool hasCommand(const StringRef& name) const;
+  bool hasCommand(const Command& rs) const;
 
-  iterator              find(const Command& _c);
-  const_iterator        find(const Command& _n) const;
-  iterator              find(const StringRef& _n);
-  const_iterator        find(const StringRef& _n) const;
+  iterator find(const Command& _c);
+  const_iterator find(const Command& _n) const;
+  iterator find(const StringRef& _n);
+  const_iterator find(const StringRef& _n) const;
 
-  iterator              search(const StringRef& name);
-  const_iterator        search(const StringRef& name) const;
-  search_depth          search(const StringRef& name, NSInteger maxDepth, NSInteger& current);
-  const_search_depth    search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const;
-  search_depth          search(const Command& name, NSInteger maxDepth, NSInteger& current);
-  const_search_depth    search(const Command& name, NSInteger maxDepth, NSInteger& current) const;
+  iterator search(const StringRef& name);
+  const_iterator search(const StringRef& name) const;
+  search_depth search(const StringRef& name, NSInteger maxDepth, NSInteger& current);
+  const_search_depth search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const;
+  search_depth search(const Command& name, NSInteger maxDepth, NSInteger& current);
+  const_search_depth search(const Command& name, NSInteger maxDepth, NSInteger& current) const;
 
-  iterator              command(const StringRef& _n, bool addIfMissing=true);
-  add_result            addCommand(const Command& __c);
-  add_result            addCommand(Command&& _c);
+  iterator command(const StringRef& _n, bool addIfMissing = true);
+  add_result addCommand(const Command& __c);
+  add_result addCommand(Command&& _c);
 
 #if CMD_USE_VARIADICS
   template <class... _Args>
   add_result addCommand(_Args&&... __args);
 #endif
 
-  iterator              removeCommand(const Command& _c);
-  iterator              addCommands(CommandVector& _c);
+  iterator removeCommand(const Command& _c);
+  iterator addCommands(CommandVector& _c);
 
   size_type count() const;
 
@@ -166,11 +169,11 @@ public:
   void setDefaultSettingsValueForKey(const StringRef& _n, id _v);
   void registerArrayForKey(const StringRef& _n);
 
-  void        setName(const StringRef& rs);
-  StringRef    getName() const;
-  void        setDescription(CommandStringBlock descriptionBlock);
-  StringRef    getDescription() const;
-  
+  void setName(const StringRef& rs);
+  StringRef getName() const;
+  void setDescription(CommandStringBlock descriptionBlock);
+  StringRef getDescription() const;
+
   void setRunBlock(CommandRunBlock __r);
   void setRunFunction(CommandRunFunction __r);
 
@@ -188,7 +191,7 @@ public:
 
   StringRef inspect(int leadingSpaces = 0) const;
 
-private:
+ private:
   void _initIvars();
   void _initNameDeps();
   void _commonInit(const StringRef& _s);
@@ -205,12 +208,12 @@ typedef Command::CommandVector CommandVector;
 
 #if CMD_USE_VARIADICS
 
-template<class... _Args>
+template <class... _Args>
 Command& Command::command(_Args&&... __args) {
   return *(AppCommand.commands.emplace(AppCommand.cend(), std::forward<_Args>(__args)...));
 }
 
-template<class... _Args>
+template <class... _Args>
 Command::add_result Command::addCommand(_Args&&... __args) {
   Command cmd(std::forward<_Args>(__args)...);
   return addCommand(std::move(cmd));

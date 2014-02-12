@@ -2,9 +2,10 @@
 
 @implementation GBSettings (BGCommander)
 
-+(GBSettings*) commandSettingsWithName:(NSString *)name parent:(GBSettings *)parent {
++ (GBSettings*)commandSettingsWithName:(NSString*)name parent:(GBSettings*)parent {
   id result = [self settingsWithName:name parent:parent];
-  if (result) {  }
+  if (result) {
+  }
   return result;
 }
 
@@ -16,8 +17,4 @@ GB_SYNTHESIZE_BOOL(printHelp, setPrintHelp, BGSettingKeys.printHelp)
 
 @end
 
-const struct BGSettingKeys BGSettingKeys = {
-  .printSettings = @"print-settings",
-  .printVersion = @"version",
-  .printHelp = @"help",
-};
+const struct BGSettingKeys BGSettingKeys = {.printSettings = @"print-settings", .printVersion = @"version", .printHelp = @"help", };

@@ -13,24 +13,22 @@ int list_main(StringVector args, GBSettings* options, Command& command) {
   return 0;
 }
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char* argv[]) {
 
   @autoreleasepool {
     CommanderAutoRunner autorunner;
 
-    OptionDefinitionVector addOpts = {
-      { 'n', @"dry-run", @"Only show what would happen", GBValueNone },
-      { 'v', @"verbose", @"Be verbose", GBValueNone },
-      { 'f', @"force", @"Allow adding otherwise ignored files", GBValueNone },
-      { 'i', @"interactive", @"Add files in \"Interactive mode\"", GBValueNone }
-    };
+    OptionDefinitionVector addOpts = {{'n', @"dry-run", @"Only show what would happen", GBValueNone},
+                                      {'v', @"verbose", @"Be verbose", GBValueNone},
+                                      {'f', @"force", @"Allow adding otherwise ignored files", GBValueNone},
+                                      {'i', @"interactive", @"Add files in \"Interactive mode\"", GBValueNone}};
 
     Command addCmd("add", "Add files to the list", addOpts);
     commander.addCommand(addCmd);
 
     Command listCmd("list");
 
-    listCmd.setRunBlock(^int(StringVector args, GBSettings *options, Command &command) {
+    listCmd.setRunBlock(^int(StringVector args, GBSettings* options, Command& command) {
       std::cout << args << std::endl;
       return 0;
     });
@@ -46,16 +44,13 @@ int main(int argc, const char * argv[]) {
     }
 
     Commander::add_result result = Command::sharedAppCommand().addCommand("swap");
-    result.first->setRunBlock(^int(StringVector args, GBSettings *settings, Command& command) {
-      return 0;
-    });
+    result.first->setRunBlock(^int(StringVector args, GBSettings* settings, Command& command) { return 0; });
 
     printf("\nCommander commands:\n");
-    for (auto & command:Command::sharedAppCommand().commands) {
+    for (auto& command : Command::sharedAppCommand().commands) {
       command.inspect(3).append("\n").print();
     }
   }
 
   return 0;
 }
-

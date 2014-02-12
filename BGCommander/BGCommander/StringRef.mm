@@ -16,45 +16,66 @@ int StringRef::compare(const StringRef& rs) const {
   return [fString compare:rs.fString];
 }
 
-void StringRef::zero()                                     { fString = NULL; preAppend = NULL; postAppend = NULL; }
+void StringRef::zero() {
+  fString = NULL;
+  preAppend = NULL;
+  postAppend = NULL;
+}
 
-NSString* StringRef::setPreAppend(NSString* rs)            { NSString* oldPreAppend = preAppend; preAppend = rs; return oldPreAppend; }
-NSString* StringRef::setPostAppend(NSString* rs)           { NSString* oldPostAppend = postAppend; postAppend = rs; return oldPostAppend; }
+NSString* StringRef::setPreAppend(NSString* rs) {
+  NSString* oldPreAppend = preAppend;
+  preAppend = rs;
+  return oldPreAppend;
+}
+NSString* StringRef::setPostAppend(NSString* rs) {
+  NSString* oldPostAppend = postAppend;
+  postAppend = rs;
+  return oldPostAppend;
+}
 
-StringRef& StringRef::operator =(const StringRef& rs)        { return assign(rs); }
-StringRef& StringRef::operator =(NSString* rs)              { return assign(rs); }
-StringRef& StringRef::operator =(const_char rs)             { return assign(rs); }
-StringRef& StringRef::operator =(StringRef&& rs)             { return _assignMove(rs); }
+StringRef& StringRef::operator=(const StringRef& rs) { return assign(rs); }
+StringRef& StringRef::operator=(NSString* rs) { return assign(rs); }
+StringRef& StringRef::operator=(const_char rs) { return assign(rs); }
+StringRef& StringRef::operator=(StringRef&& rs) { return _assignMove(rs); }
 
-StringRef& StringRef::operator +=(const StringRef& rs)       { return append(rs); }
-StringRef& StringRef::operator +=(NSString* rs)             { return append(rs); }
-StringRef& StringRef::operator +=(const_char rs)            { return append(rs); }
+StringRef& StringRef::operator+=(const StringRef& rs) { return append(rs); }
+StringRef& StringRef::operator+=(NSString* rs) { return append(rs); }
+StringRef& StringRef::operator+=(const_char rs) { return append(rs); }
 
-StringRef& StringRef::operator +(const StringRef& rs)        { return *this += rs; }
-StringRef& StringRef::operator +(NSString* rs)              { return *this += rs; }
-StringRef& StringRef::operator +(const_char rs)             { return *this += rs; }
+StringRef& StringRef::operator+(const StringRef& rs) { return *this += rs; }
+StringRef& StringRef::operator+(NSString* rs) { return *this += rs; }
+StringRef& StringRef::operator+(const_char rs) { return *this += rs; }
 
-StringRef& StringRef::operator <<(const StringRef& rs)       { return appendString(rs); }
-StringRef& StringRef::operator <<(NSString* rs)             { return appendString(rs); }
-StringRef& StringRef::operator <<(const_char rs)            { return appendString(rs); }
+StringRef& StringRef::operator<<(const StringRef& rs) { return appendString(rs); }
+StringRef& StringRef::operator<<(NSString* rs) { return appendString(rs); }
+StringRef& StringRef::operator<<(const_char rs) { return appendString(rs); }
 
-StringRef::operator NSString*() const                      { return fString; }
-StringRef::operator const_char() const                     { return c_str(); }
+StringRef::operator NSString*() const { return fString; }
+StringRef::operator const_char() const { return c_str(); }
 
-StringRef::const_char StringRef::c_str() const              { return fString.UTF8String; }
+StringRef::const_char StringRef::c_str() const { return fString.UTF8String; }
 
-size_t StringRef::size() const                             { return (fString) ? fString.length : 0; }
-size_t StringRef::hash() const                             { return fString.hash; }
+size_t StringRef::size() const { return (fString) ? fString.length : 0; }
+size_t StringRef::hash() const { return fString.hash; }
 
-StringRef& StringRef::assign(NSString* rs)                  { fString = rs; return *this; }
-StringRef& StringRef::assign(const_char rs)                 { fString = @(rs); return *this; }
+StringRef& StringRef::assign(NSString* rs) {
+  fString = rs;
+  return *this;
+}
+StringRef& StringRef::assign(const_char rs) {
+  fString = @(rs);
+  return *this;
+}
 
-StringRef& StringRef::append(NSString* rs)                  { return append(preAppend, rs, postAppend); }
-StringRef& StringRef::append(const_char rs)                 { return append(@(rs)); }
-StringRef& StringRef::append(const StringRef& rs)            { return append(rs.fString); }
-StringRef& StringRef::appendString(NSString* rs)            { fString = [fString stringByAppendingString:rs]; return *this; }
-StringRef& StringRef::appendString(const_char rs)           { return appendString(@(rs)); }
-StringRef& StringRef::appendString(const StringRef& rs)      { return appendString(rs.fString); }
+StringRef& StringRef::append(NSString* rs) { return append(preAppend, rs, postAppend); }
+StringRef& StringRef::append(const_char rs) { return append(@(rs)); }
+StringRef& StringRef::append(const StringRef& rs) { return append(rs.fString); }
+StringRef& StringRef::appendString(NSString* rs) {
+  fString = [fString stringByAppendingString:rs];
+  return *this;
+}
+StringRef& StringRef::appendString(const_char rs) { return appendString(@(rs)); }
+StringRef& StringRef::appendString(const StringRef& rs) { return appendString(rs.fString); }
 
 StringRef& StringRef::_assignMove(StringRef& rs) {
   fString = std::move(rs.fString);
@@ -110,30 +131,31 @@ StringRef& StringRef::addNewline() {
   return *this;
 }
 
-bool StringRef::is_equal(const StringRef& rs) const                                                 { return [fString isEqualToString:rs.fString]; }
-void StringRef::print(std::ostream& OS) const                                                        { OS << *this; }
-void StringRef::print(const StringRef& prefix, const StringRef& suffix, std::ostream& OS) const      { OS << prefix << *this << suffix; }
+bool StringRef::is_equal(const StringRef& rs) const { return [fString isEqualToString:rs.fString]; }
+void StringRef::print(std::ostream& OS) const { OS << *this; }
+void StringRef::print(const StringRef& prefix, const StringRef& suffix, std::ostream& OS) const { OS << prefix << *this << suffix; }
 
 BG_NAMESPACE_END
 
 @implementation NSArray (StringVector)
 
-+(NSArray*) stringsFromStringVector:(const bg::StringVector*)stringVector {
++ (NSArray*)stringsFromStringVector:(const bg::StringVector*)stringVector {
   if (stringVector->empty()) {
     return @[];
   }
-  
+
   NSMutableArray* strings = [NSMutableArray new];
 
-  for (auto const& str:*stringVector) {
+  for (auto const& str : *stringVector) {
     NSString* s = str.fString;
-    if (s) [strings addObject:s];
+    if (s)
+      [strings addObject:s];
   }
 
   return [strings copy];
 }
 
--(bg::StringVector) stringVector {
+- (bg::StringVector)stringVector {
   bg::StringVector strings;
   strings.reserve(self.count);
   for (NSUInteger i = 0; i < self.count; i++) {
