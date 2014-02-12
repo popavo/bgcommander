@@ -57,7 +57,7 @@ public:
 
   void resetAllParentRefs();
 
-  int run(StringVector& args = [[[NSProcessInfo processInfo] arguments] stringVector].from(0));
+  int run(StringVector& args = [[[NSProcessInfo processInfo] arguments] stringVector].from(1));
 };
 
 class CommanderAutoRunner {
@@ -72,7 +72,9 @@ public:
 
 template<class... _Args>
 Command& Commander::addCommand(_Args&&... __args) {
-  return *(Command::AppCommand.commands.emplace(Command::AppCommand.cend(), std::forward<_Args>(__args)...));
+  Command cmd(std::forward<_Args>(__args)...);
+  Command::AppCommand.addCommand(cmd);
+  return *find(cmd.name);
 }
 
 #endif
