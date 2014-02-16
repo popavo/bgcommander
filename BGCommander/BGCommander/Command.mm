@@ -14,10 +14,11 @@ Command& Command::sharedAppCommand() {
   static Command _sharedAppCommand([[NSProcessInfo processInfo] processName]);
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-      _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
-      _sharedAppCommand.addGlobalOption('v', @"version", @"Display version information", GBValueNone | GBOptionNoPrint);
-      _sharedAppCommand.addGlobalOption('h', @"help", @"Display help documentation", GBValueNone | GBOptionNoPrint);
-      _sharedAppCommand.setRunBlock(^int(StringVector args, GBSettings* options, Command& command) { return 0; });
+    _sharedAppCommand._isAppCommand = true;
+    _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
+    _sharedAppCommand.addGlobalOption('v', @"version", @"Display version information", GBValueNone | GBOptionNoPrint);
+    _sharedAppCommand.addGlobalOption('h', @"help", @"Display help documentation", GBValueNone | GBOptionNoPrint);
+    _sharedAppCommand.setRunBlock(^int(StringVector args, GBSettings* options, Command& command) { return 0; });
   });
   return _sharedAppCommand;
 }
@@ -39,12 +40,10 @@ void Command::_initIvars() {
   _identifier = 0;
   _needsOptionsReset = true;
   parent = nullptr;
-  addHelpToken = 0;
 }
 
 void Command::_initNameDeps() {
   if (name.valid()) {
-    _isAppCommand = name.is_equal([[NSProcessInfo processInfo] processName]);
     if (!settings)
       settings = [GBSettings commandSettingsWithName:name parent:nil];
     settings.name = name;
@@ -89,7 +88,6 @@ void Command::_copyAssign(const Command& rs) {
   _identifier = rs._identifier;
   _needsOptionsReset = rs._needsOptionsReset;
   parent = rs.parent;
-  addHelpToken = rs.addHelpToken;
   resetParentRefs();
 }
 
@@ -118,7 +116,6 @@ void Command::_moveAssign(Command&& rs) {
   _identifier = std::move(rs._identifier);
   _needsOptionsReset = std::move(rs._needsOptionsReset);
   parent = std::move(rs.parent);
-  addHelpToken = std::move(rs.addHelpToken);
   rs.clear();
   resetParentRefs();
 }
@@ -149,6 +146,7 @@ Command& Command::operator=(Command&& rs) {
 }
 
 bool Command::operator!() const { return !name; }
+Command::operator bool() const { return valid(); }
 bool Command::valid() const { return !!*this; }
 bool Command::is_equal(const Command& rs) const {
   if (!rs)
@@ -208,14 +206,8 @@ bool Command::hasCommand(const StringRef& name) const { return find(name) != cen
 bool Command::hasCommand(const Command& rs) const { return find(rs) != cend(); }
 Command::iterator Command::find(const Command& cmd) { return std::find(begin(), end(), cmd); }
 Command::const_iterator Command::find(const Command& cmd) const { return std::find(cbegin(), cend(), cmd); }
-Command::iterator Command::find(const StringRef& name) {
-  Command cmd(std::string(name.c_str()));
-  return find(cmd);
-}
-Command::const_iterator Command::find(const StringRef& name) const {
-  Command cmd(std::string(name.c_str()));
-  return find(cmd);
-}
+Command::iterator Command::find(const StringRef& name) { return std::find(begin(), end(), name); }
+Command::const_iterator Command::find(const StringRef& name) const { return std::find(cbegin(), cend(), name); }
 
 Command::iterator Command::search(const StringRef& name) {
   iterator i = find(name);
@@ -242,12 +234,18 @@ Command::const_iterator Command::search(const StringRef& name) const {
 }
 
 Command::search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) {
-  Command cmd(std::string(name.c_str()));
-  return search(cmd, maxDepth, current);
+  std::string* cmd_name = new std::string(name.c_str());
+  Command cmd(cmd_name);
+  search_depth d = search(cmd, maxDepth, current);
+  delete cmd_name;
+  return d;
 }
 Command::const_search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const {
-  Command cmd(std::string(name.c_str()));
-  return search(cmd, maxDepth, current);
+  std::string* cmd_name = new std::string(name.c_str());
+  Command cmd(cmd_name);
+  const_search_depth d = search(cmd, maxDepth, current);
+  delete cmd_name;
+  return d;
 }
 
 Command::search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) {
@@ -258,7 +256,7 @@ Command::search_depth Command::search(const Command& cmd, NSInteger maxDepth, NS
 
   iterator i = find(cmd);
   if (i != end()) {
-    // Found the command in this.commands vector
+    // Found the command in this->commands vector
     return {i, ++current};
   }
 
@@ -656,7 +654,6 @@ void Command::clear() {
   description.zero();
   syntax.clear();
   runBlock = NULL;
-  addHelpToken = 0;
 }
 
 StringRef Command::inspect(int leadingSpaces) const {
@@ -667,24 +664,30 @@ StringRef Command::inspect(int leadingSpaces) const {
   info.setPreAppend([NSString stringWithFormat:@"%*s", MAX(prespace, 0), ""]);
   info.setPostAppend(@"\n");
 
-  info.append(this->name);
+  info.append(name);
 
   if (identifier()) {
-    info.appendFormat(@"Identifier: %lu", this->identifier());
+    info.appendFormat(@"Identifier: %lu", identifier());
   }
 
   if (tag) {
-    info.appendFormat(@"Tag: %lu", this->tag);
+    info.appendFormat(@"Tag: %lu", tag);
   }
 
   if (gen) {
     info.appendFormat(@"Generation: %d", gen);
   }
 
-  if (this->count()) {
-    info.appendFormat(@"Sub-Commands (%lu):", this->count());
+  if (count()) {
+    info.appendFormat(@"Sub-Commands (%lu):", count());
+    if (_isAppCommand) {
+      info.addNewline();
+    }
     for (auto const& command : commands) {
       info.appendFormatOnly(@"%@", command.inspect(leadingSpaces).fString);
+      if (command != commands.back()) {
+        info.addNewline();
+      }
     }
   }
 

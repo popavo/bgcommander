@@ -6,7 +6,7 @@
 
 #define CommandIvars                                                                                                                                  \
   name(), description(), tag(), commands(), syntax(), optionDefinitions(), globalOptionDefinitions(), optionsHelper(nil), settings(nil), parser(nil), \
-      runBlock(NULL), runFunction(NULL), nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr), addHelpToken()
+      runBlock(NULL), runFunction(NULL), nameWrapper(), _isAppCommand(), _identifier(), _needsOptionsReset(true), parent(nullptr)
 
 BG_NAMESPACE
 
@@ -48,10 +48,9 @@ class Command {
   NSUInteger _identifier;
   bool _needsOptionsReset;
   Command* parent;
-  dispatch_once_t addHelpToken;
 
  private:
-  Command(const std::string& n) : name(n.c_str()), nameWrapper(true) {}
+  Command(const std::string* n) : name(n->c_str()), nameWrapper(true) {}
 
  public:
   static Command& sharedAppCommand();
@@ -76,6 +75,7 @@ class Command {
   EQ_OPERATOR(const StringRef&, name.is_equal(rs))
   EQ_OPERATOR(const Command&, is_equal(rs))
   bool operator!() const;
+  operator bool() const;
   bool valid() const;
   bool is_equal(const Command& rs) const;
 
@@ -189,7 +189,7 @@ class Command {
   void printVersion(int exitVal = 0);
   void printSettings(int exitVal = INT32_MIN);
 
-  StringRef inspect(int leadingSpaces = 0) const;
+  StringRef inspect(int leadingSpaces = 3) const;
 
  private:
   void _initIvars();

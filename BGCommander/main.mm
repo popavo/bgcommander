@@ -41,15 +41,19 @@ int main(int argc, const char* argv[]) {
       Command::add_result addAll = addList.first->addCommand(allCmd);
       Command listall("list-all");
       addAll.first->addCommand(listall);
+
+      Command listall2("list-all-2");
+      addAll.first->addCommand(listall2);
     }
 
     Commander::add_result result = Command::sharedAppCommand().addCommand("swap");
     result.first->setRunBlock(^int(StringVector args, GBSettings* settings, Command& command) { return 0; });
 
     printf("\nCommander commands:\n");
-    for (auto& command : Command::sharedAppCommand().commands) {
-      command.inspect(3).append("\n").print();
-    }
+    Command::sharedAppCommand().inspect(3).print();
+    //for (auto& command : Command::sharedAppCommand().commands) {
+    //  command.inspect(3).append("\n").print();
+    //}
   }
 
   return 0;

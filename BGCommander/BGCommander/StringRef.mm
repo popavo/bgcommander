@@ -27,6 +27,7 @@ NSString* StringRef::setPreAppend(NSString* rs) {
   preAppend = rs;
   return oldPreAppend;
 }
+
 NSString* StringRef::setPostAppend(NSString* rs) {
   NSString* oldPostAppend = postAppend;
   postAppend = rs;
@@ -62,6 +63,7 @@ StringRef& StringRef::assign(NSString* rs) {
   fString = rs;
   return *this;
 }
+
 StringRef& StringRef::assign(const_char rs) {
   fString = @(rs);
   return *this;
@@ -70,10 +72,12 @@ StringRef& StringRef::assign(const_char rs) {
 StringRef& StringRef::append(NSString* rs) { return append(preAppend, rs, postAppend); }
 StringRef& StringRef::append(const_char rs) { return append(@(rs)); }
 StringRef& StringRef::append(const StringRef& rs) { return append(rs.fString); }
+
 StringRef& StringRef::appendString(NSString* rs) {
   fString = [fString stringByAppendingString:rs];
   return *this;
 }
+
 StringRef& StringRef::appendString(const_char rs) { return appendString(@(rs)); }
 StringRef& StringRef::appendString(const StringRef& rs) { return appendString(rs.fString); }
 
