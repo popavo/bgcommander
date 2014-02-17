@@ -55,11 +55,6 @@ class Command {
  public:
   static Command& sharedAppCommand();
 
-#if CMD_USE_VARIADICS
-  template <class... _Args>
-  static Command& command(_Args&&... __args);
-#endif
-
   Command() : CommandIvars {
     _commonInit(name);
     _finishInit();
@@ -209,8 +204,9 @@ typedef Command::CommandVector CommandVector;
 #if CMD_USE_VARIADICS
 
 template <class... _Args>
-Command& Command::command(_Args&&... __args) {
-  return *(AppCommand.commands.emplace(AppCommand.cend(), std::forward<_Args>(__args)...));
+Command& command(_Args&&... __args) {
+  Command cmd(std::forward<_Args>(__args)...);
+  return *(Command::sharedAppCommand().addCommand(cmd).first);
 }
 
 template <class... _Args>
