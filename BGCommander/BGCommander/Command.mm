@@ -154,7 +154,7 @@ bool Command::is_equal(const Command& rs) const {
   if (nameWrapper || rs.nameWrapper) {
     return name.is_equal(rs.name);
   }
-  return (this == &rs) || (_identifier == rs._identifier);
+  return (this == &rs) || (_identifier == rs._identifier) || name.is_equal(rs.name);
 }
 
 bool Command::isAppCommand() const { return _isAppCommand; }
@@ -197,6 +197,8 @@ bool Command::hasChildren() const { return count() != 0; }
 
 Command::iterator Command::begin() { return commands.begin(); }
 Command::iterator Command::end() { return commands.end(); }
+Command::const_iterator Command::begin() const { return commands.begin(); }
+Command::const_iterator Command::end() const { return commands.end(); }
 Command::const_iterator Command::cbegin() const { return commands.cbegin(); }
 Command::const_iterator Command::cend() const { return commands.cend(); }
 
@@ -223,77 +225,41 @@ Command::iterator Command::search(const StringRef& name) {
 
 Command::const_iterator Command::search(const StringRef& name) const {
   const_iterator i = find(name);
-  if (i != cend())
+  if (i != end())
     return i;
-  for (const_iterator j = cbegin(); j != cend(); j++) {
+  for (const_iterator j = begin(); j != end(); j++) {
     i = j->search(name);
-    if (i != j->cend())
+    if (i != j->end())
       break;
   }
   return i;
 }
 
-Command::search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) {
-  std::string* cmd_name = new std::string(name.c_str());
-  Command cmd(cmd_name);
-  search_depth d = search(cmd, maxDepth, current);
-  delete cmd_name;
-  return d;
-}
-Command::const_search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const {
-  std::string* cmd_name = new std::string(name.c_str());
-  Command cmd(cmd_name);
-  const_search_depth d = search(cmd, maxDepth, current);
-  delete cmd_name;
-  return d;
-}
+#define search_imp(__c, __cmd) \
+  if (current < 0) \
+    current = 0; \
+  if (maxDepth > 0 && current > maxDepth) \
+    return {end(), current}; \
+  \
+  __c ## iterator i = find(name); \
+  if (i != end()) {  \
+    return {i, ++current}; \
+  } \
+  \
+  for (__c ## iterator j = begin(); j != end(); j++) { \
+    __c ## search_depth d = j->search(name, maxDepth, current); \
+    if (d.first != j->end()) { \
+      d.second++; \
+      return d; \
+    } \
+  } \
+  \
+  return {end(), current}; \
 
-Command::search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) {
-  if (current < 0)
-    current = 0;
-  if (maxDepth > 0 && current > maxDepth)
-    return {end(), current};
-
-  iterator i = find(cmd);
-  if (i != end()) {
-    // Found the command in this->commands vector
-    return {i, ++current};
-  }
-
-  for (iterator j = begin(); j != end(); j++) {
-    search_depth d = j->search(cmd, maxDepth, current);
-    if (d.first != j->end()) {
-      d.second++;
-      return d;
-    }
-  }
-
-  return {end(), current};
-}
-
-Command::const_search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) const {
-  if (current < 0)
-    current = 0;
-  if (maxDepth > 0 && current > maxDepth)
-    return {cend(), current};
-
-  const_iterator i = find(cmd);
-
-  if (i != cend()) {
-    // Found the command in this.commands vector
-    return {i, ++current};
-  }
-
-  for (const_iterator j = cbegin(); j != cend(); j++) {
-    const_search_depth d = j->search(cmd, maxDepth, current);
-    if (d.first != j->cend()) {
-      d.second++;
-      return d;
-    }
-  }
-
-  return {cend(), current};
-}
+Command::search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) { search_imp(, name); }
+Command::const_search_depth Command::search(const StringRef& name, NSInteger maxDepth, NSInteger& current) const { search_imp(const_, name); }
+Command::search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) { search_imp(, cmd); }
+Command::const_search_depth Command::search(const Command& cmd, NSInteger maxDepth, NSInteger& current) const { search_imp(const_, cmd); }
 
 Command::iterator Command::command(const StringRef& _n, bool addIfMissing) {
   if (!_n)
