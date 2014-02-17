@@ -15,8 +15,8 @@ Command& Command::sharedAppCommand() {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     _sharedAppCommand._isAppCommand = true;
-    _sharedAppCommand.addCommand({"help", "Display global or [command] help documentation"});
-    _sharedAppCommand.addGlobalOption('v', @"version", @"Display version information", GBValueNone | GBOptionNoPrint);
+    _sharedAppCommand.addCommand("help", "Display global or [command] help documentation");
+    _sharedAppCommand.addGlobalOption(0, @"version", @"Display version information", GBValueNone | GBOptionNoPrint);
     _sharedAppCommand.addGlobalOption('h', @"help", @"Display help documentation", GBValueNone | GBOptionNoPrint);
     _sharedAppCommand.setRunBlock(^int(StringVector args, GBSettings* options, Command& command) { return 0; });
   });
